@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" fill="none">
+  <!-- Gulf Air Falcon Emblem -->
+  <circle cx="28" cy="30" r="20" fill="#F4E8D1"/>
+  <path d="M28 14L34 26L42 28L32 34L35 44L28 38L21 44L24 34L14 28L22 26L28 14Z" fill="#C59B27"/>
+  <!-- Text -->
+  <text x="56" y="32" font-family="'Poppins', sans-serif" font-size="16" font-weight="800" fill="#1C2D42" letter-spacing="2">GULF AIR</text>
+  <text x="56" y="45" font-family="'Poppins', sans-serif" font-size="10" font-weight="600" fill="#C59B27" letter-spacing="1">طيران الخليج</text>
+</svg>

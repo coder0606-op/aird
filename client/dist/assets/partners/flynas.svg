@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 70" width="200" height="70">
+  <!-- Brand Name: flynas in signature teal #00A9E0 -->
+  <g fill="#00A9E0">
+    <!-- Stylized 'f' -->
+    <circle cx="28" cy="22" r="3" />
+    <path d="M26 30 L26 48 L32 48 L32 36 L38 36 L38 30 L32 30 L32 26 C32 24 33 24 35 24 L38 24 L38 18 L33 18 C28 18 26 21 26 26 Z" />
+    <!-- 'l' -->
+    <rect x="42" y="18" width="6" height="30" rx="1.5" />
+    <!-- 'y' -->
+    <path d="M52 30 L57 43 L62 30 L68 30 L60 48 L56 56 L50 56 L54 48 L46 30 Z" />
+    <!-- 'n' -->
+    <path d="M72 30 L72 48 L78 48 L78 37 C78 34 81 33 83 33 C86 33 88 35 88 38 L88 48 L94 48 L94 36 C94 31 90 28 84 28 C80 28 75 30 73 33 L73 30 Z" />
+    <!-- 'a' -->
+    <path d="M110 30 L110 33 C108 30 104 28 99 28 C92 28 88 33 88 39 C88 45 92 50 99 50 C104 50 108 48 110 45 L110 48 L116 48 L116 30 Z M102 44 C97 44 94 41 94 39 C94 36 97 34 102 34 C107 34 110 36 110 39 C110 41 107 44 102 44 Z" />
+    <!-- 's' -->
+    <path d="M122 43 C123 44 125 45 128 45 C132 45 134 43 134 41 C134 38 131 37 126 36 C121 34 118 32 118 28 C118 23 122 20 128 20 C133 20 137 22 139 25 L135 28 C133 26 131 25 128 25 C125 25 123 26 123 28 C123 30 125 31 129 32 C135 34 139 36 139 40 C139 46 134 49 128 49 C123 49 119 47 117 43 Z" transform="translate(4, -1)" />
+    <!-- Registered trademark symbol -->
+    <text x="148" y="24" font-size="8" font-family="Arial, sans-serif">®</text>
+  </g>
+  <!-- Arabic Subtitle: طيران ناس -->
+  <text x="110" y="60" font-family="'Segoe UI', Tahoma, Arial, sans-serif" font-weight="700" font-size="12" fill="#00A9E0" text-anchor="middle">طيران ناس</text>
+</svg>

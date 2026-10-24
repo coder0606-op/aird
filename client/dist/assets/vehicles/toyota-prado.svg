@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200" width="400" height="200">
+  <defs>
+    <linearGradient id="bodyGradPrado" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="60%" stop-color="#F8FAFC" />
+      <stop offset="100%" stop-color="#D1D5DB" />
+    </linearGradient>
+    <linearGradient id="glassGradPrado" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F172A" stop-opacity="0.88" />
+      <stop offset="100%" stop-color="#020617" stop-opacity="0.96" />
+    </linearGradient>
+    <filter id="carShadowPrado" x="-10%" y="-10%" width="120%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="#0F172A" flood-opacity="0.22" />
+    </filter>
+  </defs>
+
+  <!-- Ground Shadow -->
+  <ellipse cx="200" cy="182" rx="160" ry="11" fill="#64748B" opacity="0.28" filter="blur(4px)" />
+
+  <!-- Main Prado Group -->
+  <g filter="url(#carShadowPrado)">
+    <!-- Roof Rails -->
+    <path d="M130 52 L260 52" stroke="#475569" stroke-width="4" stroke-linecap="round" />
+    <path d="M142 52 L142 58 M248 52 L248 58" stroke="#334155" stroke-width="3" />
+
+    <!-- Upper Cabin -->
+    <path d="M92 92 L132 58 L265 58 L318 92 Z" fill="#E2E8F0" stroke="#94A3B8" stroke-width="1.5" />
+
+    <!-- Glass Areas -->
+    <path d="M98 90 L135 62 L185 62 L185 90 Z" fill="url(#glassGradPrado)" />
+    <path d="M191 62 L238 62 L238 90 L191 90 Z" fill="url(#glassGradPrado)" />
+    <path d="M244 62 L262 62 L312 90 L244 90 Z" fill="url(#glassGradPrado)" />
+
+    <!-- Pillars -->
+    <line x1="188" y1="60" x2="188" y2="92" stroke="#FFFFFF" stroke-width="4" />
+    <line x1="241" y1="60" x2="241" y2="92" stroke="#FFFFFF" stroke-width="4" />
+
+    <!-- Lower Body Exterior (Prado SUV) -->
+    <path d="M52 124 L72 94 L95 92 L132 58 L265 58 L325 92 L358 116 L358 146 L340 148 L324 148 C324 120 274 120 274 148 L136 148 C136 120 86 120 86 148 L56 148 L52 136 Z" 
+          fill="url(#bodyGradPrado)" stroke="#CBD5E1" stroke-width="1.5" />
+
+    <!-- Sculpted Body Lines -->
+    <path d="M72 98 L350 98" stroke="#94A3B8" stroke-width="1.2" opacity="0.6" />
+    <path d="M68 116 L352 116" stroke="#FFFFFF" stroke-width="2" />
+    <path d="M68 118 L352 118" stroke="#94A3B8" stroke-width="1" opacity="0.4" />
+
+    <!-- Prado Vertical Chrome Grille Accents & Projector Headlights -->
+    <path d="M52 114 L75 114 L72 135 L52 132 Z" fill="#E2E8F0" />
+    <polygon points="53,114 72,114 70,126 54,124" fill="#38BDF8" opacity="0.85" />
+    <line x1="56" y1="120" x2="70" y2="120" stroke="#FFFFFF" stroke-width="2" />
+    <path d="M54 114 L72 114 L72 118" fill="none" stroke="#FFFFFF" stroke-width="2.5" />
+
+    <!-- Rear Tail Light (Prado High Vertical Stalk) -->
+    <polygon points="355,100 342,102 342,126 355,124" fill="#EF4444" />
+    <polygon points="355,108 346,110 346,118 355,116" fill="#FFFFFF" opacity="0.8" />
+
+    <!-- Door Seams & Chrome Handles -->
+    <line x1="180" y1="92" x2="180" y2="148" stroke="#94A3B8" stroke-width="1.2" />
+    <line x1="250" y1="92" x2="250" y2="148" stroke="#94A3B8" stroke-width="1.2" />
+    <rect x="156" y="104" width="16" height="4" rx="2" fill="#94A3B8" stroke="#475569" stroke-width="0.5" />
+    <rect x="228" y="104" width="16" height="4" rx="2" fill="#94A3B8" stroke="#475569" stroke-width="0.5" />
+
+    <!-- Side Mirror -->
+    <path d="M118 84 C118 79 128 79 131 83 L131 92 L122 92 Z" fill="#FFFFFF" stroke="#94A3B8" stroke-width="1" />
+
+    <!-- Wheel Arches -->
+    <path d="M78 148 C78 114 144 114 144 148" fill="none" stroke="#1E293B" stroke-width="4" />
+    <path d="M266 148 C266 114 332 114 332 148" fill="none" stroke="#1E293B" stroke-width="4" />
+
+    <!-- Side Step -->
+    <rect x="140" y="146" width="130" height="6" rx="2" fill="#1E293B" stroke="#64748B" stroke-width="1" />
+  </g>
+
+  <!-- Front Wheel -->
+  <g>
+    <circle cx="111" cy="148" r="27" fill="#1E293B" stroke="#0F172A" stroke-width="2" />
+    <circle cx="111" cy="148" r="17" fill="#E2E8F0" stroke="#94A3B8" stroke-width="1.5" />
+    <circle cx="111" cy="148" r="6" fill="#475569" />
+    <line x1="111" y1="131" x2="111" y2="165" stroke="#64748B" stroke-width="3" />
+    <line x1="96" y1="140" x2="126" y2="156" stroke="#64748B" stroke-width="3" />
+    <line x1="96" y1="156" x2="126" y2="140" stroke="#64748B" stroke-width="3" />
+    <circle cx="111" cy="148" r="3" fill="#00A6B2" />
+  </g>
+
+  <!-- Rear Wheel -->
+  <g>
+    <circle cx="299" cy="148" r="27" fill="#1E293B" stroke="#0F172A" stroke-width="2" />
+    <circle cx="299" cy="148" r="17" fill="#E2E8F0" stroke="#94A3B8" stroke-width="1.5" />
+    <circle cx="299" cy="148" r="6" fill="#475569" />
+    <line x1="299" y1="131" x2="299" y2="165" stroke="#64748B" stroke-width="3" />
+    <line x1="284" y1="140" x2="314" y2="156" stroke="#64748B" stroke-width="3" />
+    <line x1="284" y1="156" x2="314" y2="140" stroke="#64748B" stroke-width="3" />
+    <circle cx="299" cy="148" r="3" fill="#00A6B2" />
+  </g>
+</svg>

@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200" width="400" height="200">
+  <defs>
+    <linearGradient id="bodyGradLC" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="60%" stop-color="#F1F5F9" />
+      <stop offset="100%" stop-color="#CBD5E1" />
+    </linearGradient>
+    <linearGradient id="glassGradLC" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E293B" stop-opacity="0.9" />
+      <stop offset="100%" stop-color="#0F172A" stop-opacity="0.95" />
+    </linearGradient>
+    <filter id="carShadowLC" x="-10%" y="-10%" width="120%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="#0F172A" flood-opacity="0.25" />
+    </filter>
+  </defs>
+
+  <!-- Ground Shadow -->
+  <ellipse cx="200" cy="182" rx="165" ry="12" fill="#64748B" opacity="0.28" filter="blur(4px)" />
+
+  <!-- Main Body Group -->
+  <g filter="url(#carShadowLC)">
+    <!-- Roof Rails -->
+    <path d="M120 48 L270 48" stroke="#64748B" stroke-width="4" stroke-linecap="round" />
+    <path d="M135 48 L135 54 M255 48 L255 54" stroke="#475569" stroke-width="3" />
+
+    <!-- Upper Cabin Frame -->
+    <path d="M85 92 L125 54 L275 54 L325 92 Z" fill="#E2E8F0" stroke="#94A3B8" stroke-width="1.5" />
+
+    <!-- Windows / Glass -->
+    <!-- Front Windshield -->
+    <path d="M92 90 L128 58 L180 58 L180 90 Z" fill="url(#glassGradLC)" />
+    <!-- Rear/Side Windows -->
+    <path d="M186 58 L240 58 L240 90 L186 90 Z" fill="url(#glassGradLC)" />
+    <path d="M246 58 L272 58 L318 90 L246 90 Z" fill="url(#glassGradLC)" />
+
+    <!-- Window Pillars -->
+    <line x1="183" y1="56" x2="183" y2="92" stroke="#FFFFFF" stroke-width="4" />
+    <line x1="243" y1="56" x2="243" y2="92" stroke="#FFFFFF" stroke-width="4" />
+
+    <!-- Lower Body Exterior -->
+    <path d="M45 125 L65 92 L88 92 L125 54 L275 54 L335 92 L365 115 L365 145 L345 148 L330 148 C330 120 280 120 280 148 L130 148 C130 120 80 120 80 148 L50 148 L45 138 Z" 
+          fill="url(#bodyGradLC)" stroke="#CBD5E1" stroke-width="1.5" />
+
+    <!-- Side Character Lines -->
+    <path d="M68 96 L355 96" stroke="#94A3B8" stroke-width="1.2" opacity="0.6" />
+    <path d="M60 118 L360 118" stroke="#E2E8F0" stroke-width="2" />
+    <path d="M60 120 L360 120" stroke="#94A3B8" stroke-width="1" opacity="0.5" />
+
+    <!-- Front Bumper & Headlights (Toyota LC 300 Style) -->
+    <path d="M45 115 L72 115 L70 135 L45 132 Z" fill="#E2E8F0" />
+    <polygon points="46,114 68,114 66,128 47,126" fill="#38BDF8" opacity="0.85" />
+    <line x1="50" y1="120" x2="65" y2="120" stroke="#FFFFFF" stroke-width="2" />
+    <!-- LED DRL strip -->
+    <path d="M47 114 L68 114 L68 118" fill="none" stroke="#FFFFFF" stroke-width="2.5" />
+
+    <!-- Rear Tail Light -->
+    <polygon points="362,112 345,114 345,126 362,124" fill="#EF4444" />
+    <polygon points="362,118 350,119 350,123 362,122" fill="#FFFFFF" opacity="0.7" />
+
+    <!-- Door Seams & Handles -->
+    <line x1="175" y1="92" x2="175" y2="148" stroke="#94A3B8" stroke-width="1.2" />
+    <line x1="250" y1="92" x2="250" y2="148" stroke="#94A3B8" stroke-width="1.2" />
+    <rect x="150" y="104" width="16" height="4" rx="2" fill="#475569" />
+    <rect x="225" y="104" width="16" height="4" rx="2" fill="#475569" />
+
+    <!-- Side Mirror -->
+    <path d="M112 85 C112 80 122 80 125 84 L125 92 L116 92 Z" fill="#FFFFFF" stroke="#94A3B8" stroke-width="1" />
+
+    <!-- Front & Rear Wheel Arches (Fender Flares) -->
+    <path d="M72 148 C72 114 138 114 138 148" fill="none" stroke="#0F172A" stroke-width="4" />
+    <path d="M272 148 C272 114 338 114 338 148" fill="none" stroke="#0F172A" stroke-width="4" />
+
+    <!-- Side Step Board -->
+    <rect x="134" y="146" width="142" height="6" rx="2" fill="#1E293B" stroke="#64748B" stroke-width="1" />
+  </g>
+
+  <!-- Front Wheel Assembly -->
+  <g>
+    <!-- Outer Tire -->
+    <circle cx="105" cy="148" r="28" fill="#1E293B" stroke="#0F172A" stroke-width="2" />
+    <!-- Rim Base -->
+    <circle cx="105" cy="148" r="18" fill="#E2E8F0" stroke="#94A3B8" stroke-width="1.5" />
+    <!-- Spokes (6-spoke Alloy) -->
+    <circle cx="105" cy="148" r="7" fill="#475569" />
+    <line x1="105" y1="130" x2="105" y2="166" stroke="#64748B" stroke-width="3" />
+    <line x1="89" y1="139" x2="121" y2="157" stroke="#64748B" stroke-width="3" />
+    <line x1="89" y1="157" x2="121" y2="139" stroke="#64748B" stroke-width="3" />
+    <circle cx="105" cy="148" r="3" fill="#00A6B2" />
+  </g>
+
+  <!-- Rear Wheel Assembly -->
+  <g>
+    <!-- Outer Tire -->
+    <circle cx="305" cy="148" r="28" fill="#1E293B" stroke="#0F172A" stroke-width="2" />
+    <!-- Rim Base -->
+    <circle cx="305" cy="148" r="18" fill="#E2E8F0" stroke="#94A3B8" stroke-width="1.5" />
+    <!-- Spokes (6-spoke Alloy) -->
+    <circle cx="305" cy="148" r="7" fill="#475569" />
+    <line x1="305" y1="130" x2="305" y2="166" stroke="#64748B" stroke-width="3" />
+    <line x1="289" y1="139" x2="321" y2="157" stroke="#64748B" stroke-width="3" />
+    <line x1="289" y1="157" x2="321" y2="139" stroke="#64748B" stroke-width="3" />
+    <circle cx="305" cy="148" r="3" fill="#00A6B2" />
+  </g>
+
+  <!-- Subtle Emblem Badge -->
+  <circle cx="58" cy="123" r="3" fill="#00A6B2" />
+</svg>

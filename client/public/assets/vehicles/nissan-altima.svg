@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200" width="400" height="200">
+  <defs>
+    <linearGradient id="bodyGradAltima" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="60%" stop-color="#F1F5F9" />
+      <stop offset="100%" stop-color="#CBD5E1" />
+    </linearGradient>
+    <linearGradient id="glassGradAltima" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F172A" stop-opacity="0.9" />
+      <stop offset="100%" stop-color="#020617" stop-opacity="0.95" />
+    </linearGradient>
+    <filter id="carShadowAltima" x="-10%" y="-10%" width="120%" height="140%">
+      <feDropShadow dx="0" dy="7" stdDeviation="5" flood-color="#0F172A" flood-opacity="0.22" />
+    </filter>
+  </defs>
+
+  <!-- Ground Shadow -->
+  <ellipse cx="200" cy="180" rx="160" ry="10" fill="#64748B" opacity="0.28" filter="blur(4px)" />
+
+  <!-- Main Altima Sedan Body -->
+  <g filter="url(#carShadowAltima)">
+    <!-- Low Aero Sedan Roofline -->
+    <path d="M102 96 L145 64 L258 64 L318 96 Z" fill="#E2E8F0" stroke="#94A3B8" stroke-width="1.5" />
+
+    <!-- Glass Areas (Sleek Fastback Arch) -->
+    <path d="M108 94 L148 68 L192 68 L192 94 Z" fill="url(#glassGradAltima)" />
+    <path d="M198 68 L244 68 L244 94 L198 94 Z" fill="url(#glassGradAltima)" />
+    <path d="M250 68 L262 68 L310 94 L250 94 Z" fill="url(#glassGradAltima)" />
+
+    <!-- B-pillar -->
+    <line x1="195" y1="66" x2="195" y2="95" stroke="#FFFFFF" stroke-width="4" />
+
+    <!-- Main Sedan Body -->
+    <path d="M42 130 L66 102 L98 96 L145 64 L258 64 L335 96 L372 106 L372 140 L352 144 L332 144 C332 120 286 120 286 144 L138 144 C138 120 92 120 92 144 L48 144 L42 138 Z" 
+          fill="url(#bodyGradAltima)" stroke="#CBD5E1" stroke-width="1.5" />
+
+    <!-- Nissan V-Motion Sharp Crease Lines -->
+    <path d="M66 102 L368 102" stroke="#94A3B8" stroke-width="1.2" opacity="0.5" />
+    <path d="M58 118 L366 118" stroke="#FFFFFF" stroke-width="2" />
+    <path d="M58 120 L366 120" stroke="#94A3B8" stroke-width="1" opacity="0.35" />
+
+    <!-- Sharp Arrowhead Headlights (Nissan Style) -->
+    <path d="M42 118 L72 116 L68 128 L42 126 Z" fill="#E2E8F0" />
+    <polygon points="43,118 70,116 66,125 44,124" fill="#38BDF8" opacity="0.9" />
+    <path d="M46 117 L69 116 L65 120" fill="none" stroke="#FFFFFF" stroke-width="2" />
+
+    <!-- Sleek Horizontal Tail Lamp -->
+    <polygon points="370,108 344,110 344,118 370,116" fill="#EF4444" />
+    <polygon points="370,112 348,113 348,116 370,115" fill="#FFFFFF" opacity="0.8" />
+
+    <!-- Door Lines & Handles -->
+    <line x1="190" y1="96" x2="190" y2="144" stroke="#94A3B8" stroke-width="1.2" />
+    <line x1="262" y1="96" x2="262" y2="144" stroke="#94A3B8" stroke-width="1.2" />
+    <rect x="162" y="106" width="14" height="3.5" rx="1.5" fill="#64748B" />
+    <rect x="236" y="106" width="14" height="3.5" rx="1.5" fill="#64748B" />
+
+    <!-- Side Mirror -->
+    <path d="M125 90 C125 86 134 86 137 89 L137 96 L128 96 Z" fill="#FFFFFF" stroke="#94A3B8" stroke-width="1" />
+
+    <!-- Wheel Arches -->
+    <path d="M84 144 C84 116 146 116 146 144" fill="none" stroke="#1E293B" stroke-width="3.5" />
+    <path d="M278 144 C278 116 340 116 340 144" fill="none" stroke="#1E293B" stroke-width="3.5" />
+  </g>
+
+  <!-- Front Wheel -->
+  <g>
+    <circle cx="115" cy="144" r="24" fill="#1E293B" stroke="#0F172A" stroke-width="2" />
+    <circle cx="115" cy="144" r="15" fill="#E2E8F0" stroke="#94A3B8" stroke-width="1.5" />
+    <circle cx="115" cy="144" r="5" fill="#475569" />
+    <line x1="115" y1="129" x2="115" y2="159" stroke="#64748B" stroke-width="2.5" />
+    <line x1="102" y1="137" x2="128" y2="151" stroke="#64748B" stroke-width="2.5" />
+    <line x1="102" y1="151" x2="128" y2="137" stroke="#64748B" stroke-width="2.5" />
+    <circle cx="115" cy="144" r="2.5" fill="#00A6B2" />
+  </g>
+
+  <!-- Rear Wheel -->
+  <g>
+    <circle cx="309" cy="144" r="24" fill="#1E293B" stroke="#0F172A" stroke-width="2" />
+    <circle cx="309" cy="144" r="15" fill="#E2E8F0" stroke="#94A3B8" stroke-width="1.5" />
+    <circle cx="309" cy="144" r="5" fill="#475569" />
+    <line x1="309" y1="129" x2="309" y2="159" stroke="#64748B" stroke-width="2.5" />
+    <line x1="296" y1="137" x2="322" y2="151" stroke="#64748B" stroke-width="2.5" />
+    <line x1="296" y1="151" x2="322" y2="137" stroke="#64748B" stroke-width="2.5" />
+    <circle cx="309" cy="144" r="2.5" fill="#00A6B2" />
+  </g>
+</svg>

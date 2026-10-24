@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" fill="none">
+  <!-- Air Arabia Seagull -->
+  <path d="M12 34C18 24 28 22 36 26C30 29 24 32 20 38C28 32 38 32 46 36C36 40 24 40 12 34Z" fill="#ED1C24"/>
+  <!-- Text -->
+  <text x="54" y="30" font-family="'Poppins', sans-serif" font-size="15" font-weight="800" fill="#ED1C24" letter-spacing="0.5">Air Arabia</text>
+  <text x="54" y="44" font-family="'Poppins', sans-serif" font-size="10" font-weight="600" fill="#64748B" letter-spacing="1">العربية للطيران</text>
+</svg>
