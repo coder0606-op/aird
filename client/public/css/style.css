@@ -23,7 +23,7 @@
   --color-gold: #F5B301;
   --color-gold-hover: #d99e00;
   --color-gold-light: #FFF4D6;
-  
+
   /* Text Colors */
   --text-primary: #0A1F44;
   --text-secondary: #516480;
@@ -468,41 +468,49 @@ input, select, textarea {
   text-transform: uppercase;
 }
 
-/* Air Dream Desktop Nav Links on White Navbar */
+/* Air Dream Desktop Nav Links on White Navbar with Elegant Spacing */
 .desktop-nav.air-dream-nav {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: clamp(8px, 1.2vw, 18px);
 }
 
 .desktop-nav.air-dream-nav .nav-link {
-  color: #1E293B;
-  font-weight: 600;
-  font-size: 0.95rem;
-  padding: 8px 0;
+  color: #334155;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  font-size: 0.9rem;
+  letter-spacing: 0.2px;
+  padding: 7px 11px;
+  border-radius: 8px;
   position: relative;
-  transition: color 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   text-decoration: none;
+  white-space: nowrap;
 }
 
 .desktop-nav.air-dream-nav .nav-link:hover {
-  color: #1E6FD9;
+  color: #0284C7;
+  background: rgba(2, 132, 199, 0.06);
+  transform: translateY(-1px);
 }
 
 .desktop-nav.air-dream-nav .nav-link.active {
-  color: #1E6FD9;
-  font-weight: 700;
+  color: #0284C7;
+  font-weight: 600;
+  background: rgba(2, 132, 199, 0.08);
 }
 
 .desktop-nav.air-dream-nav .nav-link.active::after {
   content: '';
   position: absolute;
-  bottom: -4px;
-  left: 0;
-  width: 100%;
+  bottom: 0px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 16px;
   height: 2.5px;
   background: #F5B301;
-  border-radius: 2px;
+  border-radius: 999px;
 }
 
 .desktop-nav.air-dream-nav .nav-link-contact {
@@ -513,7 +521,64 @@ input, select, textarea {
 }
 
 .desktop-nav.air-dream-nav .nav-link-contact .contact-accent-icon {
-  color: #1E6FD9;
+  color: #0284C7;
+}
+
+/* Header Right Actions & Admin Pill */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.header-admin-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 15px;
+  background: linear-gradient(135deg, #004b87, #0284c7);
+  color: #FFFFFF !important;
+  border-radius: 999px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-decoration: none;
+  box-shadow: 0 3px 10px rgba(0, 75, 135, 0.25);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.header-admin-pill-btn:hover {
+  background: linear-gradient(135deg, #0284c7, #00a896);
+  box-shadow: 0 5px 15px rgba(2, 132, 199, 0.4);
+  transform: translateY(-1.5px);
+  color: #FFFFFF;
+}
+
+.top-bar-admin-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.78rem;
+  color: #F5B301 !important;
+  font-weight: 700;
+  text-decoration: none;
+  margin-left: 10px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(245, 179, 1, 0.12);
+  border: 1px solid rgba(245, 179, 1, 0.35);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.top-bar-admin-badge:hover {
+  background: rgba(245, 179, 1, 0.24);
+  border-color: #F5B301;
+  color: #FFFFFF !important;
+  transform: translateY(-1px);
 }
 
 /* Green WhatsApp Button from Image 1 */
@@ -581,7 +646,7 @@ input, select, textarea {
   transform: translateY(-7.2px) rotate(-45deg);
 }
 
-@media (max-width: 991px) {
+@media (max-width: 1140px) {
   .desktop-nav.air-dream-nav {
     display: none;
   }
@@ -1005,7 +1070,6 @@ input, select, textarea {
   font-size: 0.95rem;
   display: flex;
   justify-content: center;
-}
   flex-direction: column;
   gap: 14px;
 }
@@ -3152,7 +3216,7 @@ html, body {
     gap: 12px;
   }
 
-  .input-with-icon input, 
+  .input-with-icon input,
   .input-with-icon select {
     padding: 12px 14px;
     font-size: 0.88rem;
@@ -3357,7 +3421,7 @@ html, body {
     height: 400px;
   }
 
-  .card-front-cover, 
+  .card-front-cover,
   .card-second-opened {
     width: 290px;
   }
@@ -5185,19 +5249,31 @@ textarea.form-control {
 .admin-modal-card {
   background: #fff;
   border-radius: var(--ad-radius-lg);
-  width: 100%;
-  max-width: 580px;
+  width: 95%;
+  max-width: 620px;
   max-height: 90vh;
   display: flex;
   flex-direction: column;
-  box-shadow: var(--ad-shadow-xl);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
   overflow: hidden;
+  position: relative;
   animation: modalSlideUp 0.25s ease-out;
 }
 
 @keyframes modalSlideUp {
   from { transform: translateY(20px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
+}
+
+.admin-modal-card form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
 }
 
 .admin-modal-card .modal-header {
@@ -5207,12 +5283,14 @@ textarea.form-control {
   align-items: center;
   justify-content: space-between;
   background: #fafafa;
+  flex-shrink: 0;
 }
 
 .modal-header h3 {
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   font-weight: 700;
   color: var(--ad-gray-900);
+  margin: 0;
 }
 
 .modal-close-x {
@@ -5227,6 +5305,7 @@ textarea.form-control {
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.2s ease;
 }
 
 .modal-close-x:hover {
@@ -5235,19 +5314,72 @@ textarea.form-control {
 }
 
 .admin-modal-card .modal-body {
-  padding: 24px;
+  padding: 22px 26px;
   overflow-y: auto;
+  overflow-x: hidden;
   flex: 1;
+  min-height: 0;
+  max-height: calc(90vh - 140px);
 }
 
 .admin-modal-card .modal-footer {
-  padding: 18px 24px;
+  flex-shrink: 0;
+  padding: 16px 26px;
   border-top: 1px solid var(--ad-gray-200);
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 14px;
+  gap: 12px;
   background: #ffffff;
+  position: sticky;
+  bottom: 0;
+  z-index: 20;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.admin-modal-card .form-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  width: 100%;
+  margin-bottom: 14px;
+}
+
+.admin-modal-card .form-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  width: 100%;
+  margin-bottom: 14px;
+}
+
+.admin-modal-card .form-field {
+  min-width: 0;
+  width: 100%;
+  margin-bottom: 14px;
+}
+
+.admin-modal-card .form-field label {
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  display: block;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 6px;
+}
+
+.admin-modal-card .form-control {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.admin-modal-card .image-input-group,
+.admin-modal-card .image-input-controls {
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 /* ==========================================================================

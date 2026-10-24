@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import api from "../utils/api";
 import toast from "react-hot-toast";
+import "./admin.css";
 
 const STORAGE_KEY = "air_dream_site_data_v2";
 
@@ -890,11 +891,11 @@ export default function AdminPanel() {
                 border: "none",
                 cursor: "default",
               }}
-              title="Authorized Admin Base Number"
+              title="Authorized Administrator Email"
             >
               <i className="fa-solid fa-circle-user"></i>
               <span className="btn-text-hide">
-                Admin: {user?.baseNumber || "3165514265"}
+                Admin: {user?.email || "admin@airdream.com"}
               </span>
             </span>
 
@@ -2600,8 +2601,29 @@ export default function AdminPanel() {
             </button>
           </div>
 
-          <form onSubmit={handleModalSubmit}>
-            <div className="modal-body">
+          <form
+            onSubmit={handleModalSubmit}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              flex: 1,
+              minHeight: 0,
+              overflow: "hidden",
+              margin: 0,
+              padding: 0,
+            }}
+          >
+            <div
+              className="modal-body"
+              style={{
+                flex: 1,
+                overflowY: "auto",
+                overflowX: "hidden",
+                minHeight: 0,
+                maxHeight: "calc(90vh - 140px)",
+                padding: "22px 26px",
+              }}
+            >
               {/* IMAGE URL & UPLOAD PREVIEW */}
               <div className="form-field">
                 <label>Featured Image URL or Upload</label>
@@ -3190,7 +3212,23 @@ export default function AdminPanel() {
               )}
             </div>
 
-            <div className="modal-footer">
+            <div
+              className="modal-footer"
+              style={{
+                flexShrink: 0,
+                padding: "16px 26px",
+                borderTop: "1px solid #e2e8f0",
+                background: "#ffffff",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "flex-end",
+                gap: "12px",
+                position: "sticky",
+                bottom: 0,
+                zIndex: 20,
+                boxShadow: "0 -4px 12px rgba(0, 0, 0, 0.04)",
+              }}
+            >
               <button
                 type="button"
                 className="btn-action-cancel"

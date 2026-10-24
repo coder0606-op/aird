@@ -1,27 +1,33 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import api from '../utils/api';
+import React, { createContext, useContext, useState, useEffect } from "react";
+import api from "../utils/api";
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [token, setToken] = useState(() => localStorage.getItem('token') || null);
+  const [token, setToken] = useState(
+    () => localStorage.getItem("token") || null,
+  );
   const [admin, setAdmin] = useState(() => {
-    const saved = localStorage.getItem('adminUser');
+    const saved = localStorage.getItem("adminUser");
     return saved ? JSON.parse(saved) : null;
   });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const verifyToken = async () => {
-      const storedToken = localStorage.getItem('token');
+      const storedToken = localStorage.getItem("token");
       if (storedToken) {
         try {
-          const res = await api.get('/auth/me');
-          setAdmin(res.data);
-          localStorage.setItem('adminUser', JSON.stringify(res.data));
+          const res = await api.get("/auth/profile");
+          if (res.data) {
+            setAdmin(res.data);
+            localStorage.setItem("adminUser", JSON.stringify(res.data));
+          }
         } catch (err) {
-          // If server error or offline, keep cached session if valid format
-          if (!localStorage.getItem('adminUser')) {
+          if (
+            err.response &&
+            (err.response.status === 401 || err.response.status === 403)
+          ) {
             logout();
           }
         }
@@ -32,41 +38,45 @@ export function AuthProvider({ children }) {
   }, []);
 
   const login = async (identifier, password) => {
-    // Support both baseNumber (3165514265) and email (admin@airdream.com)
-    let email = identifier.trim();
-    if (email === '3165514265') {
-      email = 'admin@airdream.com';
-    }
+    const email = (identifier || "").trim().toLowerCase();
+    const pass = (password || "").trim();
 
     try {
-      const res = await api.post('/auth/login', {
+      const res = await api.post("/auth/login", {
         email,
-        password: password === 'airdreamtravel123' ? 'admin123' : password
+        password: pass,
       });
 
-      const { token: jwtToken, admin: adminData } = res.data;
-      setToken(jwtToken);
-      setAdmin(adminData);
-      localStorage.setItem('token', jwtToken);
-      localStorage.setItem('adminUser', JSON.stringify(adminData));
-      return { success: true };
+      if (res.data && res.data.token) {
+        const { token: jwtToken, admin: adminData } = res.data;
+        setToken(jwtToken);
+        setAdmin(adminData);
+        localStorage.setItem("token", jwtToken);
+        localStorage.setItem("adminUser", JSON.stringify(adminData));
+        return { success: true };
+      }
+      return {
+        success: false,
+        message: res.data?.message || "Authentication failed",
+      };
     } catch (error) {
-      // Offline fallback for test credentials if server isn't running
-      const isDefaultMatch =
-        (identifier === '3165514265' || identifier === 'admin@airdream.com') &&
-        (password === 'airdreamtravel123' || password === 'admin123');
-
-      if (isDefaultMatch) {
-        const mockAdmin = { id: 'admin-1', email: 'admin@airdream.com', name: 'Master Admin' };
-        const mockToken = 'mock-admin-token-airdream';
+      // In case server is offline or unreachable, match with default .env values
+      if (email === "admin@airdream.com" && pass === "admin123") {
+        const mockAdmin = {
+          id: "admin_env",
+          email: "admin@airdream.com",
+          name: "Administrator",
+          role: "admin",
+        };
+        const mockToken = "mock-admin-token-airdream";
         setToken(mockToken);
         setAdmin(mockAdmin);
-        localStorage.setItem('token', mockToken);
-        localStorage.setItem('adminUser', JSON.stringify(mockAdmin));
+        localStorage.setItem("token", mockToken);
+        localStorage.setItem("adminUser", JSON.stringify(mockAdmin));
         return { success: true };
       }
 
-      const msg = error.response?.data?.message || 'Invalid Base Number or Password.';
+      const msg = error.response?.data?.message || "Invalid email or password.";
       return { success: false, message: msg };
     }
   };
@@ -74,8 +84,8 @@ export function AuthProvider({ children }) {
   const logout = () => {
     setToken(null);
     setAdmin(null);
-    localStorage.removeItem('token');
-    localStorage.removeItem('adminUser');
+    localStorage.removeItem("token");
+    localStorage.removeItem("adminUser");
   };
 
   return (
@@ -83,10 +93,11 @@ export function AuthProvider({ children }) {
       value={{
         token,
         admin,
+        user: admin,
         isAuthenticated: !!token,
         loading,
         login,
-        logout
+        logout,
       }}
     >
       {children}

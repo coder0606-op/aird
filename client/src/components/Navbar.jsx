@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 export default function Navbar({ onOpenQuote }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -13,15 +13,15 @@ export default function Navbar({ onOpenQuote }) {
     };
 
     const handleKeyDown = (e) => {
-      if (e.key === 'Escape') setIsMenuOpen(false);
+      if (e.key === "Escape") setIsMenuOpen(false);
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
 
@@ -32,18 +32,18 @@ export default function Navbar({ onOpenQuote }) {
     e.preventDefault();
     closeMenu();
 
-    if (location.pathname !== '/') {
-      navigate('/' + targetId);
+    if (location.pathname !== "/") {
+      navigate("/" + targetId);
       setTimeout(() => {
         const el = document.querySelector(targetId);
-        if (el) el.scrollIntoView({ behavior: 'smooth' });
+        if (el) el.scrollIntoView({ behavior: "smooth" });
       }, 150);
     } else {
       const el = document.querySelector(targetId);
       if (el) {
-        el.scrollIntoView({ behavior: 'smooth' });
+        el.scrollIntoView({ behavior: "smooth" });
       } else {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({ top: 0, behavior: "smooth" });
       }
     }
   };
@@ -105,6 +105,14 @@ export default function Navbar({ onOpenQuote }) {
               >
                 <i className="fa-brands fa-whatsapp"></i>
               </a>
+              <Link
+                to="/admin"
+                className="top-bar-admin-badge"
+                title="Admin Control Center"
+              >
+                <i className="fa-solid fa-shield-halved"></i>
+                <span>Admin Portal</span>
+              </Link>
             </div>
           </div>
         </div>
@@ -112,14 +120,14 @@ export default function Navbar({ onOpenQuote }) {
 
       {/* Main Header (Air Dream squircle badge, green WhatsApp, dark hamburger) */}
       <header
-        className={`main-header air-dream-header ${isScrolled ? 'scrolled' : ''}`}
+        className={`main-header air-dream-header ${isScrolled ? "scrolled" : ""}`}
         id="mainHeader"
       >
         <div className="container header-container">
           {/* Brand Logo */}
           <Link
             to="/"
-            onClick={(e) => handleNavClick(e, '#hero')}
+            onClick={(e) => handleNavClick(e, "#hero")}
             className="brand-logo-link air-dream-brand"
             aria-label="Air Dream Travel & Tourism Home"
           >
@@ -134,85 +142,90 @@ export default function Navbar({ onOpenQuote }) {
             </div>
           </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="desktop-nav air-dream-nav" aria-label="Main Navigation">
+          {/* Desktop Navigation with Elegant Wording and Responsive Spacing */}
+          <nav
+            className="desktop-nav air-dream-nav"
+            aria-label="Main Navigation"
+          >
             <a
               href="#hero"
-              onClick={(e) => handleNavClick(e, '#hero')}
+              onClick={(e) => handleNavClick(e, "#hero")}
               className="nav-link active"
             >
               Home
             </a>
             <a
               href="#about-us"
-              onClick={(e) => handleNavClick(e, '#about-us')}
+              onClick={(e) => handleNavClick(e, "#about-us")}
               className="nav-link"
             >
-              About Us
+              About
             </a>
             <a
               href="#tours"
-              onClick={(e) => handleNavClick(e, '#tours')}
+              onClick={(e) => handleNavClick(e, "#tours")}
               className="nav-link"
             >
-              Tour - Trips
-            </a>
-            <a
-              href="#transfers"
-              onClick={(e) => handleNavClick(e, '#transfers')}
-              className="nav-link"
-            >
-              Airport Transfer
-            </a>
-            <a
-              href="#gallery"
-              onClick={(e) => handleNavClick(e, '#gallery')}
-              className="nav-link"
-            >
-              Gallery
+              Tours
             </a>
             <a
               href="#attractions"
-              onClick={(e) => handleNavClick(e, '#attractions')}
+              onClick={(e) => handleNavClick(e, "#attractions")}
               className="nav-link"
             >
-              Dubai Attractions
+              Attractions
+            </a>
+            <a
+              href="#transfers"
+              onClick={(e) => handleNavClick(e, "#transfers")}
+              className="nav-link"
+            >
+              Transfers
             </a>
             <a
               href="#packages"
-              onClick={(e) => handleNavClick(e, '#packages')}
+              onClick={(e) => handleNavClick(e, "#packages")}
               className="nav-link"
             >
               Packages
             </a>
             <a
+              href="#gallery"
+              onClick={(e) => handleNavClick(e, "#gallery")}
+              className="nav-link"
+            >
+              Gallery
+            </a>
+            <a
               href="#testimonials"
-              onClick={(e) => handleNavClick(e, '#testimonials')}
+              onClick={(e) => handleNavClick(e, "#testimonials")}
               className="nav-link"
             >
               Reviews
             </a>
-            <Link
-              to="/admin"
-              className="nav-link"
-              style={{ color: '#0284c7', fontWeight: 700 }}
-            >
-              <i className="fa-solid fa-sliders"></i> Admin
-            </Link>
             <a
               href="#contact"
-              onClick={(e) => handleNavClick(e, '#contact')}
+              onClick={(e) => handleNavClick(e, "#contact")}
               className="nav-link nav-link-contact"
             >
               <span className="contact-accent-icon">
-                <i className="fa-solid fa-envelope"></i>
+                <i className="fa-regular fa-paper-plane"></i>
               </span>
               <span>Contact</span>
             </a>
           </nav>
 
-          {/* Right Action Icons (Green WhatsApp + Dark Hamburger) */}
+          {/* Right Action Icons (Admin Pill + Green WhatsApp + Dark Hamburger) */}
           <div className="header-actions">
+            <Link
+              to="/admin"
+              className="header-admin-pill-btn"
+              title="Admin Control Center"
+            >
+              <i className="fa-solid fa-sliders"></i>
+              <span>Admin</span>
+            </Link>
+
             <a
               href="https://wa.me/971588338927"
               target="_blank"
@@ -225,7 +238,7 @@ export default function Navbar({ onOpenQuote }) {
 
             <button
               type="button"
-              className={`header-dark-hamburger-btn ${isMenuOpen ? 'active' : ''}`}
+              className={`header-dark-hamburger-btn ${isMenuOpen ? "active" : ""}`}
               onClick={toggleMenu}
               aria-label="Toggle navigation menu"
             >
@@ -238,11 +251,11 @@ export default function Navbar({ onOpenQuote }) {
 
         {/* Mobile Dropdown Backdrop & Menu */}
         <div
-          className={`mobile-nav-backdrop ${isMenuOpen ? 'open' : ''}`}
+          className={`mobile-nav-backdrop ${isMenuOpen ? "open" : ""}`}
           onClick={closeMenu}
         ></div>
         <aside
-          className={`borderlink-mobile-menu ${isMenuOpen ? 'open' : ''}`}
+          className={`borderlink-mobile-menu ${isMenuOpen ? "open" : ""}`}
           aria-label="Mobile Navigation Menu"
         >
           <div className="borderlink-menu-inner">
@@ -250,7 +263,7 @@ export default function Navbar({ onOpenQuote }) {
               <div className="borderlink-menu-item-home">
                 <a
                   href="#hero"
-                  onClick={(e) => handleNavClick(e, '#hero')}
+                  onClick={(e) => handleNavClick(e, "#hero")}
                   className="borderlink-nav-item active"
                 >
                   Home
@@ -259,70 +272,70 @@ export default function Navbar({ onOpenQuote }) {
               </div>
               <a
                 href="#about-us"
-                onClick={(e) => handleNavClick(e, '#about-us')}
+                onClick={(e) => handleNavClick(e, "#about-us")}
                 className="borderlink-nav-item"
               >
                 About Us
               </a>
               <a
                 href="#tours"
-                onClick={(e) => handleNavClick(e, '#tours')}
+                onClick={(e) => handleNavClick(e, "#tours")}
                 className="borderlink-nav-item"
               >
-                Tour - Trips (Salalah)
+                Tours &amp; Excursions
+              </a>
+              <a
+                href="#attractions"
+                onClick={(e) => handleNavClick(e, "#attractions")}
+                className="borderlink-nav-item"
+              >
+                Dubai Attractions
               </a>
               <a
                 href="#transfers"
-                onClick={(e) => handleNavClick(e, '#transfers')}
+                onClick={(e) => handleNavClick(e, "#transfers")}
                 className="borderlink-nav-item"
               >
-                Airport Transfer
+                Airport Transfers
+              </a>
+              <a
+                href="#packages"
+                onClick={(e) => handleNavClick(e, "#packages")}
+                className="borderlink-nav-item"
+              >
+                Holiday &amp; Umrah Packages
               </a>
               <a
                 href="#gallery"
-                onClick={(e) => handleNavClick(e, '#gallery')}
+                onClick={(e) => handleNavClick(e, "#gallery")}
                 className="borderlink-nav-item"
               >
                 Photo Gallery
               </a>
               <a
-                href="#attractions"
-                onClick={(e) => handleNavClick(e, '#attractions')}
-                className="borderlink-nav-item"
-              >
-                Top Dubai Attractions
-              </a>
-              <a
-                href="#packages"
-                onClick={(e) => handleNavClick(e, '#packages')}
-                className="borderlink-nav-item"
-              >
-                Umrah &amp; World Packages
-              </a>
-              <a
                 href="#testimonials"
-                onClick={(e) => handleNavClick(e, '#testimonials')}
+                onClick={(e) => handleNavClick(e, "#testimonials")}
                 className="borderlink-nav-item"
               >
-                Guest Reviews
+                Traveler Reviews
               </a>
               <Link
                 to="/admin"
                 onClick={closeMenu}
                 className="borderlink-nav-item"
-                style={{ color: '#0284c7', fontWeight: 700 }}
+                style={{ color: "#0284c7", fontWeight: 700 }}
               >
-                <i className="fa-solid fa-sliders"></i> Admin Dashboard
+                <i className="fa-solid fa-shield-halved"></i> Admin Control Hub
               </Link>
               <a
                 href="#contact"
-                onClick={(e) => handleNavClick(e, '#contact')}
+                onClick={(e) => handleNavClick(e, "#contact")}
                 className="borderlink-nav-item borderlink-contact-item"
               >
                 <span className="contact-mini-envelope">
-                  <i className="fa-solid fa-envelope"></i>
+                  <i className="fa-regular fa-paper-plane"></i>
                 </span>
-                <span>Contact (+971 58 833 8927)</span>
+                <span>Contact Us</span>
               </a>
             </div>
             <div className="borderlink-menu-actions">
@@ -331,7 +344,7 @@ export default function Navbar({ onOpenQuote }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-borderlink-signup"
-                style={{ textAlign: 'center', textDecoration: 'none' }}
+                style={{ textAlign: "center", textDecoration: "none" }}
               >
                 <i className="fa-brands fa-whatsapp"></i> WhatsApp
               </a>
@@ -340,7 +353,7 @@ export default function Navbar({ onOpenQuote }) {
                 className="btn-borderlink-login"
                 onClick={() => {
                   closeMenu();
-                  if (onOpenQuote) onOpenQuote('Custom Quote Request');
+                  if (onOpenQuote) onOpenQuote("Custom Quote Request");
                 }}
               >
                 Quote
