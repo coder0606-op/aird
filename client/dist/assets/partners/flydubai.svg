@@ -1,8 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" fill="none">
-  <!-- flydubai dynamic swoosh -->
-  <path d="M12 36C22 20 38 18 46 28C38 30 26 36 12 36Z" fill="#F47920"/>
-  <path d="M22 42C34 26 44 24 50 32C42 34 32 40 22 42Z" fill="#005B94"/>
-  <!-- Text -->
-  <text x="56" y="32" font-family="'Poppins', sans-serif" font-size="16" font-weight="800" fill="#005B94" letter-spacing="-0.3">fly<tspan fill="#F47920">dubai</tspan></text>
-  <text x="56" y="46" font-family="'Poppins', sans-serif" font-size="10" font-weight="600" fill="#64748B" letter-spacing="1">UAE AIRLINE</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" width="60" height="60" fill="none">
+  <rect width="60" height="60" rx="14" fill="#003B64"/>
+  <!-- Dynamic dual-swoosh emblem -->
+  <path d="M12 36C22 18 42 16 48 26C38 28 26 34 12 36Z" fill="#F47920"/>
+  <path d="M18 42C30 24 44 22 50 30C40 32 30 38 18 42Z" fill="#FFFFFF"/>
 </svg>

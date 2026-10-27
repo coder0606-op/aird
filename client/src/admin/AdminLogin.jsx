@@ -62,7 +62,8 @@ export default function AdminLogin() {
           />
           <div className="air-dream-brand-text">
             <span className="air-dream-brand-name">Air Dream</span>
-            <span className="air-dream-brand-sub">TRAVEL &amp; TOURISM</span>
+            <span className="air-dream-brand-sub">TRAVEL TOURISM</span>
+            <span className="air-dream-brand-llc">LLC</span>
           </div>
         </div>
 

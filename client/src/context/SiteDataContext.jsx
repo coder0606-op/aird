@@ -4,6 +4,75 @@ import api from '../utils/api';
 const STORAGE_KEY = 'air_dream_site_data_v2';
 const SiteDataContext = createContext();
 
+export const DEFAULT_WHY_CHOOSE_US = [
+  {
+    id: 1,
+    title: 'Worldwide Flights',
+    titleFormatted: 'Worldwide Flights',
+    icon: '✈️',
+    price: 'From $299',
+    desc: 'Book cheap international flights with top airlines: Emirates, Qatar Airways, Etihad, Saudi, FlyDubai, Air Arabia & more. Best fares guaranteed with flexible cancellation.',
+    description: 'Book cheap international flights with top airlines: Emirates, Qatar Airways, Etihad, Saudi, FlyDubai, Air Arabia & more. Best fares guaranteed with flexible cancellation.',
+    image: '/assets/cards/card1.png',
+    fallback: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=700&q=80'
+  },
+  {
+    id: 2,
+    title: 'VIP Umrah Packages',
+    titleFormatted: 'VIP Umrah Packages',
+    icon: '🕌',
+    price: 'From $799',
+    desc: 'Complete 5-star Umrah packages including return flights, Haram-view hotel, Ziyarat tours, visa processing, and dedicated group guide — all inclusive.',
+    description: 'Complete 5-star Umrah packages including return flights, Haram-view hotel, Ziyarat tours, visa processing, and dedicated group guide — all inclusive.',
+    image: '/assets/cards/card2.jpg',
+    fallback: 'https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?auto=format&fit=crop&w=700&q=80'
+  },
+  {
+    id: 3,
+    title: 'Holiday Tours',
+    titleFormatted: 'Holiday Tours',
+    icon: '🌴',
+    price: 'From $599',
+    desc: 'Customized family & honeymoon tour packages to Maldives, Bali, Turkey, Europe, Malaysia, Thailand & beyond. Hotel + flights + transfers included.',
+    description: 'Customized family & honeymoon tour packages to Maldives, Bali, Turkey, Europe, Malaysia, Thailand & beyond. Hotel + flights + transfers included.',
+    image: '/assets/cards/card3.jpg',
+    fallback: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=700&q=80'
+  },
+  {
+    id: 4,
+    title: 'Visa Assistance',
+    titleFormatted: 'Visa Assistance',
+    icon: '🛂',
+    price: 'From $49',
+    desc: 'Fast visa processing for Schengen, UK, US, UAE, Saudi, Oman & GCC. Document checklist, expert review, and real-time status updates — 95% success rate.',
+    description: 'Fast visa processing for Schengen, UK, US, UAE, Saudi, Oman & GCC. Document checklist, expert review, and real-time status updates — 95% success rate.',
+    image: '/assets/cards/card4.jpg',
+    fallback: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=700&q=80'
+  },
+  {
+    id: 5,
+    title: 'Dubai Experiences',
+    titleFormatted: 'Dubai Experiences',
+    icon: '🏙️',
+    price: 'From $55',
+    desc: 'Desert safari, Burj Khalifa, dhow cruise, Global Village, theme parks and more. Private & group tours available daily. Hotel pickups included.',
+    description: 'Desert safari, Burj Khalifa, dhow cruise, Global Village, theme parks and more. Private & group tours available daily. Hotel pickups included.',
+    image: '/assets/cards/card5.jpg',
+    fallback: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=700&q=80'
+  },
+  {
+    id: 6,
+    title: 'Airport Transfers',
+    titleFormatted: 'Airport Transfers',
+    icon: '🚗',
+    price: 'From $45',
+    desc: 'VIP airport pick-up and drop-off with Toyota Land Cruiser, Prado, Mercedes V-Class & more. Professional chauffeurs, meet & greet, 24/7 availability.',
+    description: 'VIP airport pick-up and drop-off with Toyota Land Cruiser, Prado, Mercedes V-Class & more. Professional chauffeurs, meet & greet, 24/7 availability.',
+    image: '/assets/cards/card6.jpg',
+    fallback: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=700&q=80'
+  }
+];
+
 export function SiteDataProvider({ children }) {
   const [siteData, setSiteData] = useState({
     wallpapers: [],
@@ -13,19 +82,20 @@ export function SiteDataProvider({ children }) {
     packages: [],
     gallery: [],
     reviews: [],
+    whyChooseUs: DEFAULT_WHY_CHOOSE_US,
     settings: {
       brandName: 'Air Dream',
-      brandTagline: 'TRAVEL & TOURISM',
+      brandTagline: 'TRAVEL TOURISM LLC',
       logoUrl: '/assets/air-dream-badge.svg',
       phone: '+971 58 833 8927',
       whatsapp: '971588338927',
       email: 'info@airdreamtravel.com',
       address: 'Office 402, Al Asmawi Building, Sheikh Zayed Road, Dubai, UAE',
-      aboutQuote: 'We, at Air Dream Travel & Tourism, cater to our clients a lifestyle at its best where they can feel the pulse of Dubai and the unseen facets of the world, through our exclusive guided tours and other value-added services.',
+      aboutQuote: 'We, at Air Dream Travel Tourism LLC, cater to our clients a lifestyle at its best where they can feel the pulse of Dubai and the unseen facets of the world, through our exclusive guided tours and other value-added services.',
       aboutArchImg: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=800&q=80',
       bubble1Img: 'https://images.unsplash.com/photo-1518684079-3c830dcef090?auto=format&fit=crop&w=400&q=80',
       bubble2Img: 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=300&q=80',
-      bubble3Img: 'https://images.unsplash.com/photo-1546412414-e1885259563a?auto=format&fit=crop&w=300&q=80'
+      bubble3Img: 'https://images.unsplash.com/photo-1580674684081-7617fbf3d745?auto=format&fit=crop&w=400&q=80'
     }
   });
 
@@ -37,7 +107,11 @@ export function SiteDataProvider({ children }) {
       const res = await api.get('/site-content');
       if (res.data && Object.keys(res.data).length > 0) {
         setSiteData((prev) => {
-          const merged = { ...prev, ...res.data };
+          const incomingCards = res.data.whyChooseUs;
+          const validCards = (incomingCards && incomingCards.length > 0 && incomingCards[0]?.title !== 'Global Reach' && incomingCards[0]?.title !== 'Tour Guide')
+            ? incomingCards
+            : DEFAULT_WHY_CHOOSE_US;
+          const merged = { ...prev, ...res.data, whyChooseUs: validCards };
           localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
           return merged;
         });
@@ -50,15 +124,20 @@ export function SiteDataProvider({ children }) {
 
     // 2. Fallback to individual REST endpoints
     try {
-      const [actRes, tourRes, dealRes, testRes] = await Promise.allSettled([
+      const [actRes, tourRes, dealRes, testRes, whyRes] = await Promise.allSettled([
         api.get('/activities'),
         api.get('/tours'),
         api.get('/travel-deals'),
-        api.get('/testimonials')
+        api.get('/testimonials'),
+        api.get('/why-choose-us')
       ]);
 
       setSiteData((prev) => {
         const updated = { ...prev };
+
+        if (whyRes.status === 'fulfilled' && Array.isArray(whyRes.value.data) && whyRes.value.data.length > 0) {
+          updated.whyChooseUs = whyRes.value.data;
+        }
 
         if (actRes.status === 'fulfilled' && Array.isArray(actRes.value.data) && actRes.value.data.length > 0) {
           updated.attractions = actRes.value.data.map((a) => ({
@@ -122,9 +201,21 @@ export function SiteDataProvider({ children }) {
     if (cached) {
       try {
         const parsed = JSON.parse(cached);
-        if (parsed && typeof parsed === 'object') {
+          if (parsed.whyChooseUs && (parsed.whyChooseUs[0]?.title === 'Global Reach' || parsed.whyChooseUs[0]?.title === 'Tour Guide')) {
+            parsed.whyChooseUs = DEFAULT_WHY_CHOOSE_US;
+          }
+          if (parsed.settings && (parsed.settings.aboutArchImg?.includes('photo-1507525428034') || parsed.settings.aboutQuote?.includes('Arabian Travel'))) {
+            parsed.settings = {
+              ...parsed.settings,
+              aboutQuote: 'We, at Air Dream Travel Tourism LLC, cater to our clients a lifestyle at its best where they can feel the pulse of Dubai and the unseen facets of the world, through our exclusive guided tours and other value-added services.',
+              aboutArchImg: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=800&q=80',
+              bubble1Img: 'https://images.unsplash.com/photo-1518684079-3c830dcef090?auto=format&fit=crop&w=400&q=80',
+              bubble2Img: 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=300&q=80',
+              bubble3Img: 'https://images.unsplash.com/photo-1580674684081-7617fbf3d745?auto=format&fit=crop&w=400&q=80'
+            };
+          }
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
           setSiteData((prev) => ({ ...prev, ...parsed }));
-        }
       } catch (e) {}
     } else {
       // Or fetch from default-data.json
@@ -142,23 +233,29 @@ export function SiteDataProvider({ children }) {
     fetchSiteData();
 
     // Listen for cross-tab or cross-component admin updates
-    const handleUpdate = () => {
+    const handleUpdate = (e) => {
+      if (e?.detail && typeof e.detail === 'object') {
+        setSiteData((prev) => ({ ...prev, ...e.detail }));
+        return;
+      }
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
         try {
           const parsed = JSON.parse(stored);
           setSiteData((prev) => ({ ...prev, ...parsed }));
-        } catch (e) {}
+        } catch (err) {}
       } else {
         fetchSiteData();
       }
     };
 
     window.addEventListener('airdream-data-updated', handleUpdate);
+    window.addEventListener('airdream:data_updated', handleUpdate);
     window.addEventListener('storage', handleUpdate);
 
     return () => {
       window.removeEventListener('airdream-data-updated', handleUpdate);
+      window.removeEventListener('airdream:data_updated', handleUpdate);
       window.removeEventListener('storage', handleUpdate);
     };
   }, [fetchSiteData]);

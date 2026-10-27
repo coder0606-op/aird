@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../utils/api';
+import { useSiteData } from '../context/SiteDataContext';
 
 const DEFAULT_PACKAGES = [
   {
@@ -113,37 +114,102 @@ const DEFAULT_PACKAGES = [
 ];
 
 export default function PackagesSection({ onBookPackage }) {
+  const { siteData } = useSiteData();
   const [activeFilter, setActiveFilter] = useState('all');
-  const [packages, setPackages] = useState(DEFAULT_PACKAGES);
+  const [packages, setPackages] = useState(() => {
+    if (siteData?.packages && siteData.packages.length > 0) {
+      return siteData.packages;
+    }
+    return DEFAULT_PACKAGES;
+  });
+
+  const mapPackage = (item, idx) => {
+    const rawCat = (item.category || 'tours').toLowerCase();
+    let normalizedCategory = 'tours';
+    if (rawCat.includes('umrah')) normalizedCategory = 'umrah';
+    else if (rawCat.includes('flight')) normalizedCategory = 'flights';
+    else if (rawCat.includes('holiday')) normalizedCategory = 'tours';
+
+    let durationText = '5 Days / 4 Nights';
+    if (typeof item.duration === 'string') {
+      durationText = item.duration;
+    } else if (item.duration && typeof item.duration === 'object') {
+      durationText = `${item.duration.days || 5} Days / ${item.duration.nights || 4} Nights`;
+    }
+
+    const defaultIncls = [
+      { icon: 'fa-hotel', text: 'Hotel Included' },
+      { icon: 'fa-car', text: 'Transfers' },
+      { icon: 'fa-certificate', text: 'Guided Tour' }
+    ];
+
+    let inclusionsList = defaultIncls;
+    if (Array.isArray(item.inclusions) && item.inclusions.length > 0) {
+      inclusionsList = item.inclusions.map((inc) => {
+        if (typeof inc === 'string') {
+          return { icon: 'fa-check', text: inc };
+        }
+        return inc;
+      });
+    }
+
+    return {
+      id: item.id || item._id || idx,
+      category: normalizedCategory,
+      title: item.title,
+      image: item.image || (item.images && item.images[0]) || DEFAULT_PACKAGES[idx % DEFAULT_PACKAGES.length].image,
+      badge: item.badge || 'Best Seller',
+      badgeClass: 'gold',
+      duration: durationText,
+      ratingCategory: item.tag || 'Holiday Escape',
+      rating: item.rating || 4.9,
+      reviews: item.reviews || (50 + idx * 12),
+      inclusions: inclusionsList,
+      price: item.price
+        ? (typeof item.price === 'string' ? (item.price.includes('$') ? item.price : `$${item.price}`) : `$${item.price}`)
+        : '$649'
+    };
+  };
 
   useEffect(() => {
-    api.get('/travel-deals')
-      .then((res) => {
-        if (res.data?.length > 0) {
-          const apiDeals = res.data.map((item, idx) => ({
-            id: item._id || idx,
-            category: item.category || 'tours',
-            title: item.title,
-            image: item.image || DEFAULT_PACKAGES[idx % DEFAULT_PACKAGES.length].image,
-            badge: item.badge || 'Featured',
-            badgeClass: 'gold',
-            duration: item.duration
-              ? `${item.duration.days || 5} Days / ${item.duration.nights || 4} Nights`
-              : '5 Days / 4 Nights',
-            ratingCategory: item.tag || 'Special Deal',
-            rating: 4.9,
-            reviews: 50 + idx * 12,
-            inclusions: [
-              { icon: 'fa-hotel', text: 'Hotel Included' },
-              { icon: 'fa-car', text: 'Transfers' },
-              { icon: 'fa-certificate', text: 'Guided Tour' }
-            ],
-            price: item.price ? (item.price.startsWith('$') ? item.price : `$${item.price}`) : '$699'
-          }));
-          setPackages(apiDeals);
-        }
-      })
-      .catch(() => {});
+    if (siteData?.packages && siteData.packages.length > 0) {
+      setPackages(siteData.packages.map(mapPackage));
+    }
+  }, [siteData?.packages]);
+
+  useEffect(() => {
+    const handleUpdate = (e) => {
+      if (e?.detail?.packages && Array.isArray(e.detail.packages)) {
+        setPackages(e.detail.packages.map(mapPackage));
+      } else {
+        try {
+          const stored = localStorage.getItem('air_dream_site_data_v2');
+          if (stored) {
+            const parsed = JSON.parse(stored);
+            if (parsed.packages?.length > 0) {
+              setPackages(parsed.packages.map(mapPackage));
+              return;
+            }
+          }
+        } catch (err) {}
+
+        api.get('/travel-deals')
+          .then((res) => {
+            if (res.data?.length > 0) {
+              setPackages(res.data.map(mapPackage));
+            }
+          })
+          .catch(() => {});
+      }
+    };
+
+    window.addEventListener('airdream-data-updated', handleUpdate);
+    window.addEventListener('airdream:data_updated', handleUpdate);
+
+    return () => {
+      window.removeEventListener('airdream-data-updated', handleUpdate);
+      window.removeEventListener('airdream:data_updated', handleUpdate);
+    };
   }, []);
 
   const filtered =

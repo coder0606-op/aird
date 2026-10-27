@@ -357,7 +357,7 @@
       }
     ],
     settings: {
-      brandName: 'Air Dream Travel & Tourism',
+      brandName: 'Air Dream Travel Tourism LLC',
       brandTagline: 'Fly Your Dreams',
       logoUrl: 'assets/air-dream-badge.svg',
       phone: '+971 58 833 8927',

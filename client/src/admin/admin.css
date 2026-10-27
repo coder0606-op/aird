@@ -1246,23 +1246,29 @@ textarea.form-control {
 .sidebar-brand-logo-wrap .air-dream-brand-text {
   display: flex;
   flex-direction: column;
-  line-height: 1.15;
+  line-height: 1;
 }
 
 .sidebar-brand-logo-wrap .air-dream-brand-name {
-  font-size: 1.35rem;
-  font-weight: 800;
+  font-size: 1.45rem;
+  font-weight: 900;
   color: #FFFFFF;
-  letter-spacing: -0.3px;
+  letter-spacing: -0.4px;
+  line-height: 1.05;
+}
+
+.sidebar-brand-logo-wrap .air-dream-brand-sub,
+.sidebar-brand-logo-wrap .air-dream-brand-llc {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #00A3FF;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  line-height: 1.15;
 }
 
 .sidebar-brand-logo-wrap .air-dream-brand-sub {
-  font-size: 0.65rem;
-  font-weight: 700;
-  color: #F5B301;
-  letter-spacing: 2px;
   margin-top: 3px;
-  text-transform: uppercase;
 }
 
 /* ==========================================================================
@@ -1319,11 +1325,24 @@ textarea.form-control {
 
 .admin-login-brand .air-dream-brand-name {
   color: #0A1F44;
-  font-size: 1.45rem;
+  font-size: 1.55rem;
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -0.4px;
+}
+
+.admin-login-brand .air-dream-brand-sub,
+.admin-login-brand .air-dream-brand-llc {
+  color: #0084D6;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  line-height: 1.15;
 }
 
 .admin-login-brand .air-dream-brand-sub {
-  color: #C5A059;
+  margin-top: 2.5px;
 }
 
 .admin-login-header h2 {
@@ -1514,5 +1533,231 @@ textarea.form-control {
   box-shadow: 0 4px 14px rgba(2, 132, 199, 0.25);
   transform: translateY(-1px);
 }
+
+/* ==========================================================================
+   ADMIN LAPTOP-ONLY GATEWAY (Disables access on phone & tablet sizes < 1024px)
+   ========================================================================== */
+.admin-phone-block-screen {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999999;
+  background: radial-gradient(circle at 50% 15%, #0B254E 0%, #061226 70%, #030A16 100%);
+  color: #FFFFFF;
+  padding: 24px;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Poppins', sans-serif;
+  overflow-y: auto;
+}
+
+.admin-phone-block-card {
+  background: rgba(15, 35, 68, 0.85);
+  border: 1px solid rgba(0, 163, 255, 0.25);
+  backdrop-filter: blur(16px);
+  border-radius: 24px;
+  padding: 36px 24px;
+  max-width: 440px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(0, 132, 214, 0.15);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.phone-block-brand-top {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding: 8px 18px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.phone-block-logo {
+  height: 40px;
+  width: 40px;
+  border-radius: 10px;
+  background: #FFFFFF;
+  padding: 2px;
+  object-fit: contain;
+}
+
+.phone-block-brand-text .air-dream-brand-name {
+  color: #FFFFFF !important;
+  font-size: 1.25rem !important;
+}
+
+.phone-block-brand-text .air-dream-brand-sub,
+.phone-block-brand-text .air-dream-brand-llc {
+  color: #00A3FF !important;
+  font-size: 0.56rem !important;
+}
+
+.phone-block-visual-wrap {
+  position: relative;
+  margin-bottom: 18px;
+}
+
+.phone-block-icon-halo {
+  width: 86px;
+  height: 86px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.25), rgba(0, 75, 135, 0.4));
+  border: 2px solid rgba(56, 189, 248, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  color: #38BDF8;
+  box-shadow: 0 0 35px rgba(56, 189, 248, 0.35);
+  animation: pulseLaptopHalo 2.5s infinite ease-in-out;
+}
+
+@keyframes pulseLaptopHalo {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 25px rgba(56, 189, 248, 0.25); }
+  50% { transform: scale(1.05); box-shadow: 0 0 45px rgba(56, 189, 248, 0.55); }
+}
+
+.phone-block-prohibited-badge {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #EF4444;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  border: 2px solid #061226;
+  box-shadow: 0 4px 10px rgba(239, 68, 68, 0.5);
+}
+
+.phone-block-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #F87171;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 12px;
+}
+
+.phone-block-title {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #FFFFFF;
+  margin: 0 0 10px 0;
+  line-height: 1.25;
+}
+
+.phone-block-message {
+  font-size: 0.88rem;
+  color: #94A3B8;
+  line-height: 1.5;
+  margin: 0 0 20px 0;
+}
+
+.phone-block-message strong {
+  color: #E2E8F0;
+}
+
+.phone-block-specs-box {
+  width: 100%;
+  background: rgba(2, 6, 23, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.specs-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.82rem;
+}
+
+.specs-tag {
+  color: #94A3B8;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.specs-value.red-text {
+  color: #F87171;
+  font-weight: 700;
+}
+
+.specs-value.green-text {
+  color: #34D399;
+  font-weight: 700;
+}
+
+.phone-block-instructions {
+  font-size: 0.82rem;
+  color: #CBD5E1;
+  line-height: 1.45;
+  margin-bottom: 24px;
+}
+
+.btn-phone-block-return {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 13px 20px;
+  background: linear-gradient(135deg, #0084D6, #0284C7);
+  color: #FFFFFF !important;
+  border-radius: 12px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 8px 24px rgba(0, 132, 214, 0.35);
+  transition: all 0.2s ease;
+}
+
+.btn-phone-block-return:hover {
+  background: linear-gradient(135deg, #0284C7, #00A896);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(0, 132, 214, 0.45);
+}
+
+/* STRICT MEDIA QUERY ENFORCEMENT */
+@media (max-width: 1023px) {
+  .admin-phone-block-screen {
+    display: flex !important;
+  }
+  .admin-laptop-view-wrapper {
+    display: none !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .admin-phone-block-screen {
+    display: none !important;
+  }
+  .admin-laptop-view-wrapper {
+    display: block !important;
+  }
+}
+
 
 

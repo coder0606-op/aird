@@ -1363,23 +1363,29 @@ textarea.form-control {
 .sidebar-brand-logo-wrap .air-dream-brand-text {
   display: flex;
   flex-direction: column;
-  line-height: 1.15;
+  line-height: 1;
 }
 
 .sidebar-brand-logo-wrap .air-dream-brand-name {
-  font-size: 1.35rem;
-  font-weight: 800;
+  font-size: 1.45rem;
+  font-weight: 900;
   color: #FFFFFF;
-  letter-spacing: -0.3px;
+  letter-spacing: -0.4px;
+  line-height: 1.05;
+}
+
+.sidebar-brand-logo-wrap .air-dream-brand-sub,
+.sidebar-brand-logo-wrap .air-dream-brand-llc {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #00A3FF;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  line-height: 1.15;
 }
 
 .sidebar-brand-logo-wrap .air-dream-brand-sub {
-  font-size: 0.65rem;
-  font-weight: 700;
-  color: #F5B301;
-  letter-spacing: 2px;
   margin-top: 3px;
-  text-transform: uppercase;
 }
 
 /* ==========================================================================
@@ -1436,11 +1442,24 @@ textarea.form-control {
 
 .admin-login-brand .air-dream-brand-name {
   color: #0A1F44;
-  font-size: 1.45rem;
+  font-size: 1.55rem;
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -0.4px;
+}
+
+.admin-login-brand .air-dream-brand-sub,
+.admin-login-brand .air-dream-brand-llc {
+  color: #0084D6;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  line-height: 1.15;
 }
 
 .admin-login-brand .air-dream-brand-sub {
-  color: #C5A059;
+  margin-top: 2.5px;
 }
 
 .admin-login-header h2 {

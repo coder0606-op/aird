@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../utils/api';
+import { useSiteData } from '../context/SiteDataContext';
 
 const DEFAULT_REVIEWS = [
   {
@@ -40,25 +41,64 @@ const DEFAULT_REVIEWS = [
 ];
 
 export default function ReviewsSection() {
-  const [reviews, setReviews] = useState(DEFAULT_REVIEWS);
+  const { siteData } = useSiteData();
+  const [reviews, setReviews] = useState(() => {
+    if (siteData?.reviews && siteData.reviews.length > 0) {
+      return siteData.reviews;
+    }
+    return DEFAULT_REVIEWS;
+  });
+
+  const mapReview = (item, idx) => ({
+    id: item.id || item._id || idx,
+    name: item.name || 'Happy Traveler',
+    avatar:
+      item.avatar ||
+      item.image ||
+      DEFAULT_REVIEWS[idx % DEFAULT_REVIEWS.length].avatar,
+    stars: item.stars || item.rating || 5,
+    quote: item.quote || item.review || item.title || 'Exceptional service and unforgettable experience.'
+  });
 
   useEffect(() => {
-    api.get('/testimonials')
-      .then((res) => {
-        if (res.data?.length > 0) {
-          const mapped = res.data.map((item, idx) => ({
-            id: item._id || idx,
-            name: item.name,
-            avatar:
-              item.avatar ||
-              DEFAULT_REVIEWS[idx % DEFAULT_REVIEWS.length].avatar,
-            stars: item.rating || 5,
-            quote: item.review || item.title || 'Exceptional service and unforgettable experience.'
-          }));
-          setReviews(mapped);
-        }
-      })
-      .catch(() => {});
+    if (siteData?.reviews && siteData.reviews.length > 0) {
+      setReviews(siteData.reviews.map(mapReview));
+    }
+  }, [siteData?.reviews]);
+
+  useEffect(() => {
+    const handleUpdate = (e) => {
+      if (e?.detail?.reviews && Array.isArray(e.detail.reviews)) {
+        setReviews(e.detail.reviews.map(mapReview));
+      } else {
+        try {
+          const stored = localStorage.getItem('air_dream_site_data_v2');
+          if (stored) {
+            const parsed = JSON.parse(stored);
+            if (parsed.reviews?.length > 0) {
+              setReviews(parsed.reviews.map(mapReview));
+              return;
+            }
+          }
+        } catch (err) {}
+
+        api.get('/testimonials')
+          .then((res) => {
+            if (res.data?.length > 0) {
+              setReviews(res.data.map(mapReview));
+            }
+          })
+          .catch(() => {});
+      }
+    };
+
+    window.addEventListener('airdream-data-updated', handleUpdate);
+    window.addEventListener('airdream:data_updated', handleUpdate);
+
+    return () => {
+      window.removeEventListener('airdream-data-updated', handleUpdate);
+      window.removeEventListener('airdream:data_updated', handleUpdate);
+    };
   }, []);
 
   const renderCard = (rev, keyPrefix) => (

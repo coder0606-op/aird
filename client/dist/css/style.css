@@ -435,37 +435,57 @@ input, select, textarea {
 }
 
 .air-dream-header-badge {
-  height: 48px;
-  width: 48px;
+  height: 52px;
+  width: 52px;
   display: block;
   object-fit: contain;
   border-radius: 12px;
   background: #FFFFFF;
   padding: 2px;
   border: 1px solid #E2E8F0;
-  box-shadow: 0 2px 8px rgba(10, 31, 68, 0.06);
+  box-shadow: 0 2px 10px rgba(10, 31, 68, 0.08);
+  flex-shrink: 0;
 }
 
 .air-dream-brand-text {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.1;
+  display: flex !important;
+  flex-direction: column !important;
+  line-height: 1 !important;
+  text-align: left;
 }
 
 .air-dream-brand-name {
-  font-size: 1.45rem;
-  font-weight: 800;
+  font-size: 1.55rem;
+  font-weight: 900;
   color: #0A1F44;
-  letter-spacing: -0.3px;
+  letter-spacing: -0.4px;
+  line-height: 1.05;
+  font-family: var(--font-main);
+  margin: 0;
+  display: block;
 }
 
 .air-dream-brand-sub {
   font-size: 0.68rem;
-  font-weight: 700;
-  color: #B45309;
+  font-weight: 800;
+  color: #0084D6 !important;
   letter-spacing: 2px;
-  margin-top: 3px;
+  margin-top: 2.5px;
   text-transform: uppercase;
+  line-height: 1.15;
+  font-family: var(--font-main);
+  display: block;
+}
+
+.air-dream-brand-llc {
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: #0084D6 !important;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  line-height: 1.15;
+  font-family: var(--font-main);
+  display: block;
 }
 
 /* Air Dream Desktop Nav Links on White Navbar with Elegant Spacing */
@@ -671,7 +691,7 @@ input, select, textarea {
    OFFICIAL AIRLINE PARTNERS (AUTO-SCROLLING LEFT TO RIGHT)
    ========================================================================== */
 .partners-section {
-  padding: 32px 0;
+  padding: 24px 0;
   background: #F8FAFC;
   border-top: 1px solid #E2E8F0;
   border-bottom: 1px solid #E2E8F0;
@@ -683,8 +703,8 @@ input, select, textarea {
   overflow: hidden;
   width: 100%;
   position: relative;
-  mask-image: linear-gradient(to right, transparent 0%, black 4%, black 96%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 4%, black 96%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
 }
 
 .partners-carousel-track {
@@ -704,73 +724,103 @@ input, select, textarea {
 
 .partner-card {
   background: #FFFFFF;
-  border-radius: 18px;
-  box-shadow: 0 4px 16px rgba(10, 31, 68, 0.05);
-  border: 1.5px solid #F1F5F9;
-  padding: 14px 26px;
-  min-height: 76px;
+  border-radius: 16px;
+  box-shadow: 0 4px 14px rgba(10, 31, 68, 0.05);
+  border: 1.5px solid #E2E8F0;
+  padding: 10px 18px;
+  min-height: 66px;
+  min-width: 220px;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 14px;
   flex-shrink: 0;
   white-space: nowrap;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-sizing: border-box;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  user-select: none;
 }
 
 .partner-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 26px rgba(10, 31, 68, 0.12);
-  border-color: #CBD5E1;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(10, 31, 68, 0.1);
+  border-color: #38BDF8;
+}
+
+.partner-logo-box {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 12px;
+  overflow: hidden;
 }
 
 .partner-logo {
-  max-height: 44px;
-  max-width: 150px;
+  width: 44px;
+  height: 44px;
   object-fit: contain;
   display: block;
 }
 
-.partner-logo-serene {
-  max-height: 40px;
-  max-width: 140px;
-}
-
-.partner-logo-saudi {
-  max-height: 52px;
-  max-width: 65px;
-}
-
-.partner-logo-flynas {
-  max-height: 44px;
-  max-width: 130px;
+.partner-text-box {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2px;
+  overflow: hidden;
+  text-align: left;
 }
 
 .partner-airline-name {
-  font-size: 0.96rem;
+  font-size: 1.02rem;
   font-weight: 700;
   color: #0A1F44;
   letter-spacing: -0.2px;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+.partner-airline-tag {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #64748B;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  line-height: 1.2;
+  white-space: nowrap;
 }
 
 @media (max-width: 600px) {
   .partners-carousel-track {
     gap: 14px;
-    animation-duration: 20s;
+    animation-duration: 22s;
   }
   .partner-card {
-    padding: 10px 18px;
-    min-height: 64px;
-    border-radius: 14px;
+    padding: 8px 14px;
+    min-height: 58px;
+    min-width: 185px;
+    border-radius: 12px;
+    gap: 10px;
+  }
+  .partner-logo-box {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
   }
   .partner-logo {
-    max-height: 34px;
-  }
-  .partner-logo-saudi {
-    max-height: 42px;
+    width: 38px;
+    height: 38px;
   }
   .partner-airline-name {
-    font-size: 0.88rem;
+    font-size: 0.9rem;
+  }
+  .partner-airline-tag {
+    font-size: 0.66rem;
   }
 }
 
@@ -2989,12 +3039,44 @@ html, body {
   .desktop-nav {
     display: none;
   }
+  /* Admin button cannot show on phone/tablet size - only show on laptop/desktop size */
+  .header-admin-pill-btn,
+  .top-bar-admin-badge {
+    display: none !important;
+  }
   .search-inputs-grid {
     grid-template-columns: 1fr 1fr;
     gap: 14px;
   }
   .search-submit-btn {
     grid-column: span 2;
+  }
+  .air-dream-brand-text {
+    display: inline-flex !important;
+    flex-direction: row !important;
+    align-items: baseline !important;
+    gap: 6px !important;
+    white-space: nowrap !important;
+    line-height: 1 !important;
+  }
+  .air-dream-brand-name {
+    font-size: 1.25rem !important;
+    color: #0A1F44 !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+    display: inline-block !important;
+  }
+  .air-dream-brand-sub,
+  .air-dream-brand-llc {
+    display: inline-block !important;
+    font-size: 0.58rem !important;
+    letter-spacing: 1px !important;
+    color: #0084D6 !important;
+    font-weight: 800 !important;
+    line-height: 1 !important;
+    margin: 0 !important;
+    white-space: nowrap !important;
   }
 }
 
@@ -3064,15 +3146,34 @@ html, body {
     border-radius: 10px;
   }
 
-  .air-dream-brand-name {
-    font-size: 1.15rem;
-    color: #0A1F44 !important;
+  .air-dream-brand-text {
+    display: inline-flex !important;
+    flex-direction: row !important;
+    align-items: baseline !important;
+    gap: 5px !important;
+    white-space: nowrap !important;
+    line-height: 1 !important;
   }
 
-  .air-dream-brand-sub {
-    font-size: 0.58rem;
-    letter-spacing: 1.2px;
-    color: #B45309 !important;
+  .air-dream-brand-name {
+    font-size: 1.15rem !important;
+    color: #0A1F44 !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+    display: inline-block !important;
+  }
+
+  .air-dream-brand-sub,
+  .air-dream-brand-llc {
+    display: inline-block !important;
+    font-size: 0.55rem !important;
+    letter-spacing: 0.9px !important;
+    color: #0084D6 !important;
+    font-weight: 800 !important;
+    line-height: 1 !important;
+    margin: 0 !important;
+    white-space: nowrap !important;
   }
 
   .header-actions {
@@ -3365,13 +3466,34 @@ html, body {
     padding-right: 8px;
   }
 
-  .air-dream-brand-name {
-    font-size: 1.02rem;
+  .air-dream-brand-text {
+    display: inline-flex !important;
+    flex-direction: row !important;
+    align-items: baseline !important;
+    gap: 3.5px !important;
+    white-space: nowrap !important;
+    line-height: 1 !important;
   }
 
-  .air-dream-brand-sub {
-    font-size: 0.52rem;
-    letter-spacing: 1px;
+  .air-dream-brand-name {
+    font-size: 1.02rem !important;
+    color: #0A1F44 !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+    display: inline-block !important;
+  }
+
+  .air-dream-brand-sub,
+  .air-dream-brand-llc {
+    display: inline-block !important;
+    font-size: 0.5rem !important;
+    letter-spacing: 0.6px !important;
+    color: #0084D6 !important;
+    font-weight: 800 !important;
+    line-height: 1 !important;
+    margin: 0 !important;
+    white-space: nowrap !important;
   }
 
   .air-dream-header-badge {
@@ -5847,5 +5969,136 @@ textarea.form-control {
   box-shadow: 0 4px 14px rgba(2, 132, 199, 0.25);
   transform: translateY(-1px);
 }
+
+/* ==========================================================================
+   AUTO / MANUAL SCROLL CONTROLS & SEAMLESS DRAG-SWIPE CONTAINERS
+   ========================================================================== */
+.carousel-scroll-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.scroll-mode-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  border: 1.5px solid #CBD5E1;
+  background: #FFFFFF;
+  color: #0A1F44;
+  box-shadow: 0 2px 8px rgba(10, 31, 68, 0.05);
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.scroll-mode-toggle-btn .toggle-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10B981;
+  box-shadow: 0 0 0 2.5px rgba(16, 185, 129, 0.25);
+  transition: all 0.2s ease;
+}
+
+.scroll-mode-toggle-btn.is-manual .toggle-dot {
+  background: #94A3B8;
+  box-shadow: 0 0 0 2.5px rgba(148, 163, 184, 0.25);
+}
+
+.scroll-mode-toggle-btn.is-auto {
+  border-color: #BAE6FD;
+  background: #F0F9FF;
+  color: #0284C7;
+}
+
+.scroll-mode-toggle-btn.is-manual {
+  border-color: #E2E8F0;
+  background: #F8FAFC;
+  color: #475569;
+}
+
+.scroll-mode-toggle-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(10, 31, 68, 0.1);
+}
+
+.scroll-arrow-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.scroll-arrow-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  border: 1.5px solid #E2E8F0;
+  color: #0A1F44;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(10, 31, 68, 0.05);
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.scroll-arrow-btn:hover {
+  background: #0284C7;
+  color: #FFFFFF;
+  border-color: #0284C7;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+  transform: scale(1.05);
+}
+
+.scroll-arrow-btn:active {
+  transform: scale(0.95);
+}
+
+/* Enable smooth mouse drag and touch swiping across carousel containers */
+.attractions-marquee-container,
+.tours-marquee-container,
+.transfers-marquee-container {
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+  cursor: grab;
+  user-select: none;
+  scroll-behavior: auto;
+  padding: 14px 16px 24px;
+}
+
+.attractions-marquee-container::-webkit-scrollbar,
+.tours-marquee-container::-webkit-scrollbar,
+.transfers-marquee-container::-webkit-scrollbar {
+  display: none !important;
+}
+
+.attractions-marquee-container:active,
+.tours-marquee-container:active,
+.transfers-marquee-container:active {
+  cursor: grabbing;
+}
+
+/* Replace fixed CSS keyframes with JS smooth continuous auto-scroll */
+.attractions-marquee-track,
+.tours-marquee-track,
+.transfers-marquee-track {
+  animation: none !important;
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  width: max-content !important;
+}
+
 
 

@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Air Dream Travel & Tourism - Full Stack MERN Travel Agency Website",
   "scripts": {
+    "predev": "node copy-cards.js",
     "client": "cd client && npm run dev",
     "server": "cd server && npm run dev",
     "dev": "concurrently \"npm run server\" \"npm run client\"",

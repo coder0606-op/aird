@@ -1,11 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useSiteData } from "../context/SiteDataContext";
 
 export default function Navbar({ onOpenQuote }) {
+  const { siteData } = useSiteData();
+  const settings = siteData?.settings || {};
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+
+  const phone = settings.phone || "+971 58 833 8927";
+  const whatsapp = settings.whatsapp || "971588338927";
+  const email = settings.email || "info@airdreamtravel.com";
+  const brandName = settings.brandName || "Air Dream";
+  const brandTagline = settings.brandTagline || "TRAVEL TOURISM LLC";
+  const logoUrl = settings.logoUrl || "/assets/air-dream-badge.svg";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -54,12 +64,12 @@ export default function Navbar({ onOpenQuote }) {
       <div className="top-bar air-dream-top-bar">
         <div className="container top-bar-inner">
           <div className="top-bar-left">
-            <a href="tel:+971588338927" className="top-bar-phone-link">
+            <a href={`tel:${phone.replace(/\s+/g, '')}`} className="top-bar-phone-link">
               <i className="fa-solid fa-phone"></i>
-              <span>+971 58 833 8927</span>
+              <span>{phone}</span>
             </a>
             <a
-              href="mailto:info@airdreamtravel.com"
+              href={`mailto:${email}`}
               className="top-bar-circle-icon-btn"
               title="Email Us"
               aria-label="Email Us"
@@ -97,7 +107,7 @@ export default function Navbar({ onOpenQuote }) {
                 <i className="fa-brands fa-tiktok"></i>
               </a>
               <a
-                href="https://wa.me/971588338927"
+                href={`https://wa.me/${whatsapp.replace(/[^0-9]/g, '')}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="top-bar-social-btn"
@@ -105,14 +115,6 @@ export default function Navbar({ onOpenQuote }) {
               >
                 <i className="fa-brands fa-whatsapp"></i>
               </a>
-              <Link
-                to="/admin"
-                className="top-bar-admin-badge"
-                title="Admin Control Center"
-              >
-                <i className="fa-solid fa-shield-halved"></i>
-                <span>Admin Portal</span>
-              </Link>
             </div>
           </div>
         </div>
@@ -129,16 +131,21 @@ export default function Navbar({ onOpenQuote }) {
             to="/"
             onClick={(e) => handleNavClick(e, "#hero")}
             className="brand-logo-link air-dream-brand"
-            aria-label="Air Dream Travel & Tourism Home"
+            aria-label="Air Dream Travel Tourism LLC Home"
           >
             <img
-              src="/assets/air-dream-badge.svg"
+              src={logoUrl}
               alt="Air Dream Logo"
               className="air-dream-header-badge"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = "/assets/air-dream-badge.svg";
+              }}
             />
             <div className="air-dream-brand-text">
               <span className="air-dream-brand-name">Air Dream</span>
-              <span className="air-dream-brand-sub">TRAVEL &amp; TOURISM</span>
+              <span className="air-dream-brand-sub">TRAVEL TOURISM</span>
+              <span className="air-dream-brand-llc">LLC</span>
             </div>
           </Link>
 
@@ -319,14 +326,6 @@ export default function Navbar({ onOpenQuote }) {
               >
                 Traveler Reviews
               </a>
-              <Link
-                to="/admin"
-                onClick={closeMenu}
-                className="borderlink-nav-item"
-                style={{ color: "#0284c7", fontWeight: 700 }}
-              >
-                <i className="fa-solid fa-shield-halved"></i> Admin Control Hub
-              </Link>
               <a
                 href="#contact"
                 onClick={(e) => handleNavClick(e, "#contact")}

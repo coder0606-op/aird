@@ -1,7 +1,18 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useSiteData } from '../context/SiteDataContext';
 
 export default function Footer({ onOpenQuote }) {
+  const { siteData } = useSiteData();
+  const settings = siteData?.settings || {};
+  const phone = settings.phone || '+971 58 833 8927';
+  const whatsapp = settings.whatsapp || '971588338927';
+  const email = settings.email || 'info@airdreamtravel.com';
+  const address = settings.address || 'Suite 408, Al Barsha Horizon Tower, Sheikh Zayed Road, Dubai, UAE';
+  const brandName = settings.brandName || 'Air Dream';
+  const brandTagline = settings.brandTagline || 'TRAVEL TOURISM LLC';
+  const logoUrl = settings.logoUrl || '/assets/air-dream-badge.svg';
+
   const scrollTo = (e, id) => {
     e.preventDefault();
     const el = document.querySelector(id);
@@ -40,37 +51,57 @@ export default function Footer({ onOpenQuote }) {
               }}
             >
               <img
-                src="/assets/air-dream-badge.svg"
-                alt="Air Dream Logo"
+                src={logoUrl}
+                alt={`${brandName} Logo`}
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = '/assets/air-dream-badge.svg';
+                }}
                 style={{
-                  height: '46px',
-                  width: '46px',
+                  height: '52px',
+                  width: '52px',
                   borderRadius: '12px',
                   background: '#fff',
-                  padding: '2px'
+                  padding: '2px',
+                  objectFit: 'contain'
                 }}
               />
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1 }}>
                 <span
                   style={{
-                    color: '#fff',
-                    fontWeight: 800,
-                    fontSize: '1.25rem',
-                    letterSpacing: '-0.3px',
-                    lineHeight: 1.1
+                    color: '#ffffff',
+                    fontWeight: 900,
+                    fontSize: '1.45rem',
+                    letterSpacing: '-0.4px',
+                    lineHeight: 1.05
                   }}
                 >
                   Air Dream
                 </span>
                 <span
                   style={{
-                    color: '#F5B301',
-                    fontSize: '0.65rem',
-                    letterSpacing: '1.5px',
-                    fontWeight: 700
+                    color: '#00A3FF',
+                    fontSize: '0.68rem',
+                    letterSpacing: '2px',
+                    fontWeight: 800,
+                    textTransform: 'uppercase',
+                    lineHeight: 1.15,
+                    marginTop: '3px'
                   }}
                 >
-                  TRAVEL &amp; TOURISM
+                  TRAVEL TOURISM
+                </span>
+                <span
+                  style={{
+                    color: '#00A3FF',
+                    fontSize: '0.68rem',
+                    letterSpacing: '2px',
+                    fontWeight: 800,
+                    textTransform: 'uppercase',
+                    lineHeight: 1.15
+                  }}
+                >
+                  LLC
                 </span>
               </div>
             </div>
@@ -328,8 +359,8 @@ export default function Footer({ onOpenQuote }) {
               }}
             >
               <i className="fa-solid fa-phone text-gold"></i>
-              <a href="tel:+971588338927" style={{ color: '#CDE8FF' }}>
-                +971 58 833 8927
+              <a href={`tel:${phone.replace(/\s+/g, '')}`} style={{ color: '#CDE8FF' }}>
+                {phone}
               </a>
             </p>
             <p
@@ -343,8 +374,8 @@ export default function Footer({ onOpenQuote }) {
               }}
             >
               <i className="fa-solid fa-envelope text-gold"></i>
-              <a href="mailto:info@airdreamtravel.com" style={{ color: '#CDE8FF' }}>
-                info@airdreamtravel.com
+              <a href={`mailto:${email}`} style={{ color: '#CDE8FF' }}>
+                {email}
               </a>
             </p>
             <p
@@ -358,7 +389,7 @@ export default function Footer({ onOpenQuote }) {
               }}
             >
               <i className="fa-solid fa-location-dot text-gold"></i>
-              <span>Dubai, United Arab Emirates</span>
+              <span>{address}</span>
             </p>
 
             <button
@@ -392,7 +423,7 @@ export default function Footer({ onOpenQuote }) {
           }}
         >
           <div>
-            &copy; {new Date().getFullYear()} Air Dream Travel &amp; Tourism. All
+            &copy; {new Date().getFullYear()} Air Dream Travel Tourism LLC. All
             rights reserved.
           </div>
           <div style={{ display: 'flex', gap: '20px' }}>

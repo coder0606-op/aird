@@ -1,6 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 70" width="200" height="70">
-  <!-- Emirates Logo -->
-  <g fill="#D71921">
-    <text x="100" y="44" font-family="'Times New Roman', serif" font-weight="700" font-size="28" fill="#D71921" text-anchor="middle" letter-spacing="1">Emirates</text>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" width="60" height="60" fill="none">
+  <rect width="60" height="60" rx="14" fill="#D71921"/>
+  <!-- Stylized Emirates Tail Fin Wing / Calligraphy Crest -->
+  <path d="M15 42C15 32 24 20 45 16C40 24 38 34 38 42C32 44 22 45 15 42Z" fill="#FFFFFF"/>
+  <path d="M22 41C24 34 30 25 43 21C39 27 36 34 35 41C30 42 25 42 22 41Z" fill="#D71921"/>
+  <path d="M28 40C30 35 34 29 42 26C39 31 37 36 36 40C33 40.5 30 40.5 28 40Z" fill="#FFD700"/>
+  <circle cx="44" cy="18" r="3" fill="#FFD700"/>
 </svg>

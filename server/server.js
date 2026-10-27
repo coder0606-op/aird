@@ -19,6 +19,8 @@ const settingRoutes = require('./routes/settingRoutes');
 const wallpaperRoutes = require('./routes/wallpaperRoutes');
 const transferRoutes = require('./routes/transferRoutes');
 const galleryRoutes = require('./routes/galleryRoutes');
+const uploadRoutes = require('./routes/uploadRoutes');
+const whyChooseUsRoutes = require('./routes/whyChooseUsRoutes');
 
 const app = express();
 
@@ -42,14 +44,16 @@ app.use(
     credentials: true,
   })
 );
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(express.json({ limit: '25mb' }));
+app.use(express.urlencoded({ extended: true, limit: '25mb' }));
 
 // Serve static files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Mount routes
 app.use('/api/auth', authRoutes);
+app.use('/api/upload', uploadRoutes);
+app.use('/api/why-choose-us', whyChooseUsRoutes);
 app.use('/api/tours', tourRoutes);
 app.use('/api/visas', visaRoutes);
 app.use('/api/activities', activityRoutes);

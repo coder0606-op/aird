@@ -1,107 +1,142 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { useSiteData } from '../context/SiteDataContext';
+import api from '../utils/api';
 
-const CARDS_DATA = [
+const DEFAULT_CARDS_DATA = [
   {
     id: 1,
-    title: 'Global Reach',
-    titleFormatted: (
-      <>
-        Global
-        <br />
-        Reach
-      </>
-    ),
-    icon: '🌍',
-    desc: 'Seamless worldwide flights & hotel packages across 150+ countries without compromising quality.',
+    title: 'Worldwide Flights',
+    icon: '✈️',
+    price: 'From $299',
+    desc: 'Book cheap international flights with top airlines: Emirates, Qatar Airways, Etihad, Saudi, FlyDubai, Air Arabia & more. Best fares guaranteed with flexible cancellation.',
     image: '/assets/cards/card1.png',
-    fallback: 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=700&q=80',
-    price: '$549'
+    fallback: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=700&q=80'
   },
   {
     id: 2,
-    title: 'Seamless Ticketing',
-    titleFormatted: (
-      <>
-        Seamless
-        <br />
-        Ticketing
-      </>
-    ),
-    icon: '🎫',
-    desc: 'Instant flight booking, rapid seat selection & hassle-free re-ticketing guaranteed.',
+    title: 'VIP Umrah Packages',
+    icon: '🕌',
+    price: 'From $799',
+    desc: 'Complete 5-star Umrah packages including return flights, Haram-view hotel, Ziyarat tours, visa processing, and dedicated group guide — all inclusive.',
     image: '/assets/cards/card2.jpg',
-    fallback: 'https://images.unsplash.com/photo-1529070538774-1843cb3265df?auto=format&fit=crop&w=700&q=80',
-    price: '$399'
+    fallback: 'https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?auto=format&fit=crop&w=700&q=80'
   },
   {
     id: 3,
-    title: 'Spiritual Journeys',
-    titleFormatted: (
-      <>
-        Spiritual
-        <br />
-        Journeys
-      </>
-    ),
-    icon: '🕋',
-    desc: 'Certified 5-star Umrah & Hajj packages with guided Ziyarat tours and utter peace of mind.',
+    title: 'Holiday Tours',
+    icon: '🌴',
+    price: 'From $599',
+    desc: 'Customized family & honeymoon tour packages to Maldives, Bali, Turkey, Europe, Malaysia, Thailand & beyond. Hotel + flights + transfers included.',
     image: '/assets/cards/card3.jpg',
-    fallback: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=700&q=80',
-    price: '$1,199'
+    fallback: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=700&q=80'
   },
   {
     id: 4,
     title: 'Visa Assistance',
-    titleFormatted: (
-      <>
-        Visa
-        <br />
-        Assistance
-      </>
-    ),
     icon: '🛂',
-    desc: 'Hassle-free visa processing with fast embassy submissions and expert support.',
+    price: 'From $49',
+    desc: 'Fast visa processing for Schengen, UK, US, UAE, Saudi, Oman & GCC. Document checklist, expert review, and real-time status updates — 95% success rate.',
     image: '/assets/cards/card4.jpg',
-    fallback: 'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?auto=format&fit=crop&w=700&q=80',
-    price: '$199'
+    fallback: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=700&q=80'
   },
   {
     id: 5,
-    title: '24/7 Support',
-    titleFormatted: (
-      <>
-        24/7
-        <br />
-        Support
-      </>
-    ),
-    icon: '⏰',
-    desc: 'Round-the-clock dedicated travel care & emergency assistance whenever you need it.',
+    title: 'Dubai Experiences',
+    icon: '🏙️',
+    price: 'From $55',
+    desc: 'Desert safari, Burj Khalifa, dhow cruise, Global Village, theme parks and more. Private & group tours available daily. Hotel pickups included.',
     image: '/assets/cards/card5.jpg',
-    fallback: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=700&q=80',
-    price: '$899'
+    fallback: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=700&q=80'
   },
   {
     id: 6,
-    title: 'Competitive Fare',
-    titleFormatted: (
-      <>
-        Competitive
-        <br />
-        Fare
-      </>
-    ),
-    icon: '💰',
-    desc: 'Get the best prices for your travel needs without compromising on premium quality.',
+    title: 'Airport Transfers',
+    icon: '🚗',
+    price: 'From $45',
+    desc: 'VIP airport pick-up and drop-off with Toyota Land Cruiser, Prado, Mercedes V-Class & more. Professional chauffeurs, meet & greet, 24/7 availability.',
     image: '/assets/cards/card6.jpg',
-    fallback: 'https://images.unsplash.com/photo-1500835556837-99ac94a94552?auto=format&fit=crop&w=700&q=80',
-    price: '$449'
+    fallback: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=700&q=80'
   }
 ];
 
+function formatTitle(card) {
+  if (React.isValidElement(card.titleFormatted)) return card.titleFormatted;
+  const title = card.title || '';
+  if (title === 'Worldwide Flights') return <>Worldwide <br />Flights</>;
+  if (title === 'VIP Umrah Packages') return <>VIP Umrah <br />Packages</>;
+  if (title === 'Holiday Tours') return <>Holiday <br />Tours</>;
+  if (title === 'Visa Assistance') return <>Visa <br />Assistance</>;
+  if (title === 'Dubai Experiences') return <>Dubai <br />Experiences</>;
+  if (title === 'Airport Transfers') return <>Airport <br />Transfers</>;
+  if (title.includes('\n')) {
+    return title.split('\n').map((line, idx, arr) => (
+      <React.Fragment key={idx}>
+        {line}
+        {idx < arr.length - 1 && <br />}
+      </React.Fragment>
+    ));
+  }
+  const words = title.split(' ');
+  if (words.length === 2) {
+    return <>{words[0]} <br />{words[1]}</>;
+  } else if (words.length === 3) {
+    return <>{words[0]} {words[1]} <br />{words[2]}</>;
+  }
+  return title;
+}
+
 export default function SingleLineCards({ onBookTrip }) {
+  const { siteData } = useSiteData();
+  const [cards, setCards] = useState(() => {
+    return (siteData?.whyChooseUs && siteData.whyChooseUs.length > 0 && siteData.whyChooseUs[0]?.title !== 'Global Reach')
+      ? siteData.whyChooseUs
+      : DEFAULT_CARDS_DATA;
+  });
   const [openCardIndex, setOpenCardIndex] = useState(null);
   const trackRef = useRef(null);
+
+  useEffect(() => {
+    if (siteData?.whyChooseUs && siteData.whyChooseUs.length > 0 && siteData.whyChooseUs[0]?.title !== 'Global Reach') {
+      setCards(siteData.whyChooseUs);
+    }
+  }, [siteData?.whyChooseUs]);
+
+  useEffect(() => {
+    const handleUpdate = (e) => {
+      if (e?.detail?.whyChooseUs && Array.isArray(e.detail.whyChooseUs) && e.detail.whyChooseUs.length > 0) {
+        if (e.detail.whyChooseUs[0]?.title !== 'Global Reach') {
+          setCards(e.detail.whyChooseUs);
+        }
+      } else {
+        try {
+          const stored = localStorage.getItem('air_dream_site_data_v2');
+          if (stored) {
+            const parsed = JSON.parse(stored);
+            if (parsed.whyChooseUs?.length > 0 && parsed.whyChooseUs[0]?.title !== 'Global Reach') {
+              setCards(parsed.whyChooseUs);
+              return;
+            }
+          }
+        } catch (err) {}
+
+        api.get('/why-choose-us')
+          .then((res) => {
+            if (res.data?.length > 0 && res.data[0]?.title !== 'Global Reach') {
+              setCards(res.data);
+            }
+          })
+          .catch(() => {});
+      }
+    };
+
+    window.addEventListener('airdream-data-updated', handleUpdate);
+    window.addEventListener('airdream:data_updated', handleUpdate);
+
+    return () => {
+      window.removeEventListener('airdream-data-updated', handleUpdate);
+      window.removeEventListener('airdream:data_updated', handleUpdate);
+    };
+  }, []);
 
   const handleCardClick = (index, cardElement, e) => {
     if (
@@ -147,9 +182,7 @@ export default function SingleLineCards({ onBookTrip }) {
         {/* Section Heading */}
         <div className="section-header why-header-wrap">
           <h2 className="why-choose-heading">
-            Why Choose <span className="text-sky">Air Dream</span>
-            <br />
-            Travel &amp; Tourism?
+            Why Choose <span className="text-sky">Air Dream</span><br />Travel &amp; Tourism?
           </h2>
           <p
             className="section-subtitle"
@@ -170,12 +203,12 @@ export default function SingleLineCards({ onBookTrip }) {
             ref={trackRef}
             id="singleLineCardsTrack"
           >
-            {CARDS_DATA.map((card, index) => {
+            {cards.map((card, index) => {
               const isOpen = openCardIndex === index;
 
               return (
                 <div
-                  key={card.id}
+                  key={card.id || index}
                   className={`single-line-card-item ${isOpen ? 'is-card-open' : ''}`}
                   onClick={(e) => handleCardClick(index, e.currentTarget, e)}
                   data-title={card.title}
@@ -193,9 +226,9 @@ export default function SingleLineCards({ onBookTrip }) {
                       </button>
 
                       <div className="card-second-body">
-                        <div className="card-second-icon">{card.icon}</div>
-                        <h3 className="card-second-title">{card.titleFormatted}</h3>
-                        <p className="card-second-desc">{card.desc}</p>
+                        <div className="card-second-icon">{card.icon || '✈️'}</div>
+                        <h3 className="card-second-title">{formatTitle(card)}</h3>
+                        <p className="card-second-desc">{card.desc || card.description}</p>
                         <button
                           type="button"
                           className="btn btn-gold btn-sm card-second-cta"
@@ -212,10 +245,10 @@ export default function SingleLineCards({ onBookTrip }) {
                     {/* Front Cover Card */}
                     <div className="card-front-cover">
                       <img
-                        src={card.image}
+                        src={card.image || card.fallback || '/assets/cards/card1.png'}
                         onError={(e) => {
                           e.target.onerror = null;
-                          e.target.src = card.fallback;
+                          e.target.src = card.fallback || '/assets/cards/card1.png';
                         }}
                         alt={card.title}
                         className="card-photo-img"

@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 480" width="100%" height="100%">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:ital,wght@1,600;1,700&amp;family=Montserrat:wght@800;900&amp;family=Poppins:wght@700;800;900&amp;display=swap');
+      .sky-color { fill: #0084FF; }
+      .navy-color { fill: #111D3B; }
+      .slogan-text {
+        font-family: 'Dancing Script', 'Brush Script MT', cursive, Georgia, serif;
+        font-style: italic;
+        font-weight: 700;
+        font-size: 26px;
+        fill: #0084FF;
+      }
+      .brand-dream {
+        font-family: 'Montserrat', 'Poppins', -apple-system, sans-serif;
+        font-weight: 900;
+        font-size: 102px;
+        fill: #111D3B;
+        letter-spacing: 2px;
+      }
+      .brand-ir {
+        font-family: 'Montserrat', 'Poppins', -apple-system, sans-serif;
+        font-weight: 900;
+        font-size: 82px;
+        fill: #111D3B;
+        letter-spacing: 1px;
+      }
+      .brand-sub {
+        font-family: 'Montserrat', 'Poppins', sans-serif;
+        font-weight: 800;
+        font-size: 27px;
+        fill: #111D3B;
+        letter-spacing: 3.5px;
+      }
+    </style>
+  </defs>
+
+  <!-- Wing / Feather Swooshes (Top Right) -->
+  <g id="wing-feathers">
+    <!-- Top Feather -->
+    <path d="M 330 130 C 342 105, 362 70, 395 60 C 378 82, 368 108, 350 128 C 342 136, 334 134, 330 130 Z" fill="#0084FF" />
+    <!-- Middle Feather -->
+    <path d="M 333 138 C 352 120, 375 100, 400 95 C 382 110, 368 126, 350 142 C 342 147, 335 143, 333 138 Z" fill="#0084FF" />
+    <!-- Bottom Feather -->
+    <path d="M 340 145 C 358 135, 374 125, 388 128 C 376 138, 362 146, 348 152 C 342 153, 338 149, 340 145 Z" fill="#0084FF" />
+  </g>
+
+  <!-- Stylized Letter "A" -->
+  <g id="letter-A">
+    <!-- Main A Body -->
+    <path d="M 172 130 L 210 130 L 262 236 L 226 236 L 213 206 L 169 206 L 157 236 L 122 236 Z M 191 154 L 178 184 L 204 184 Z" fill="#0084FF" />
+    <!-- Dynamic Contrail Swoosh looping through and under the A -->
+    <path d="M 126 226 C 96 226, 110 162, 160 140 C 200 120, 240 140, 276 150" 
+          fill="none" stroke="#0084FF" stroke-width="12" stroke-linecap="round" />
+    <!-- Contrail arc continuation to airplane -->
+    <path d="M 235 168 C 248 158, 262 150, 276 142" 
+          fill="none" stroke="#0084FF" stroke-width="8" stroke-linecap="round" />
+  </g>
+
+  <!-- Airplane Silhouette (Banking up-right) -->
+  <g id="airplane" transform="translate(285, 126) rotate(40)">
+    <!-- Fuselage -->
+    <path d="M 0 -38 C 6 -30, 8 -10, 8 20 L 16 34 L 16 38 L 4 34 L 4 48 L 12 56 L 12 60 L -12 60 L -12 56 L -4 48 L -4 34 L -16 38 L -16 34 L -8 20 C -8 -10, -6 -30, 0 -38 Z" fill="#0084FF" />
+    <!-- Main Swept Wings -->
+    <path d="M 0 0 L 42 22 L 42 28 L 6 18 L 6 30 L 0 30 L -6 30 L -6 18 L -42 28 L -42 22 Z" fill="#0084FF" />
+  </g>
+
+  <!-- Letters "IR" -->
+  <g id="letters-IR">
+    <!-- Letter I -->
+    <rect x="272" y="165" width="16" height="71" rx="2" fill="#111D3B" />
+    <!-- Letter R -->
+    <path d="M 302 165 L 334 165 C 348 165, 355 172, 355 184 C 355 194, 348 200, 338 202 L 356 236 L 338 236 L 322 205 L 318 205 L 318 236 L 302 236 Z M 318 178 L 318 193 L 332 193 C 337 193, 340 190, 340 186 C 340 181, 337 178, 332 178 Z" fill="#111D3B" />
+  </g>
+
+  <!-- Word "DREAM" -->
+  <text x="250" y="325" text-anchor="middle" class="brand-dream">DREAM</text>
+
+  <!-- TRAVEL AND TOURISM with Accent Lines -->
+  <g id="travel-and-tourism">
+    <!-- Left Accent Line -->
+    <line x1="20" y1="358" x2="68" y2="358" stroke="#0084FF" stroke-width="3.5" stroke-linecap="round" />
+    <!-- Text -->
+    <text x="250" y="367" text-anchor="middle" class="brand-sub">TRAVEL AND TOURISM</text>
+    <!-- Right Accent Line -->
+    <line x1="432" y1="358" x2="480" y2="358" stroke="#0084FF" stroke-width="3.5" stroke-linecap="round" />
+  </g>
+
+  <!-- Slogan: We Fly You Towards Your Dreams -->
+  <text x="250" y="405" text-anchor="middle" class="slogan-text">We Fly You Towards Your Dreams</text>
+</svg>

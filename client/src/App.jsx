@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import Home from './pages/Home';
 import AdminLogin from './admin/AdminLogin';
 import AdminPanel from './admin/AdminPanel';
+import AdminLaptopGate from './admin/AdminLaptopGate';
 import { useAuth } from './context/AuthContext';
 
 // Protected Route Component for Admin Dashboard
@@ -33,16 +34,25 @@ export default function App() {
       {/* Public Main Site */}
       <Route path="/" element={<Home />} />
 
-      {/* Admin Login Route */}
-      <Route path="/admin/login" element={<AdminLogin />} />
+      {/* Admin Login Route (Laptop size only) */}
+      <Route
+        path="/admin/login"
+        element={
+          <AdminLaptopGate>
+            <AdminLogin />
+          </AdminLaptopGate>
+        }
+      />
 
-      {/* Protected Admin Control Center */}
+      {/* Protected Admin Control Center (Laptop size only) */}
       <Route
         path="/admin/*"
         element={
-          <ProtectedAdminRoute>
-            <AdminPanel />
-          </ProtectedAdminRoute>
+          <AdminLaptopGate>
+            <ProtectedAdminRoute>
+              <AdminPanel />
+            </ProtectedAdminRoute>
+          </AdminLaptopGate>
         }
       />
 

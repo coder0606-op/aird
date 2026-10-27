@@ -5,6 +5,7 @@
   "description": "Air Dream Travel & Tourism - Web Application",
   "type": "module",
   "scripts": {
+    "predev": "node ../copy-cards.js",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"

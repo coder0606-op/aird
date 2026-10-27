@@ -119,8 +119,85 @@ class DataStore {
       reviews: this.get('testimonials'),
       visas: this.get('visas'),
       popups: this.get('popups'),
+      whyChooseUs: this.getWhyChooseUs(),
       settings: this.getSettings()
     };
+  }
+
+  getWhyChooseUs() {
+    const list = this.get('whyChooseUs');
+    if (!list || list.length === 0 || list[0]?.title === 'Global Reach') {
+      this.data.whyChooseUs = [
+        {
+          id: 'card-1',
+          title: 'Worldwide Flights',
+          titleFormatted: 'Worldwide Flights',
+          icon: '✈️',
+          price: 'From $299',
+          desc: 'Book cheap international flights with top airlines: Emirates, Qatar Airways, Etihad, Saudi, FlyDubai, Air Arabia & more. Best fares guaranteed with flexible cancellation.',
+          description: 'Book cheap international flights with top airlines: Emirates, Qatar Airways, Etihad, Saudi, FlyDubai, Air Arabia & more. Best fares guaranteed with flexible cancellation.',
+          image: '/assets/cards/card1.png',
+          fallback: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=700&q=80'
+        },
+        {
+          id: 'card-2',
+          title: 'VIP Umrah Packages',
+          titleFormatted: 'VIP Umrah Packages',
+          icon: '🕌',
+          price: 'From $799',
+          desc: 'Complete 5-star Umrah packages including return flights, Haram-view hotel, Ziyarat tours, visa processing, and dedicated group guide — all inclusive.',
+          description: 'Complete 5-star Umrah packages including return flights, Haram-view hotel, Ziyarat tours, visa processing, and dedicated group guide — all inclusive.',
+          image: '/assets/cards/card2.jpg',
+          fallback: 'https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?auto=format&fit=crop&w=700&q=80'
+        },
+        {
+          id: 'card-3',
+          title: 'Holiday Tours',
+          titleFormatted: 'Holiday Tours',
+          icon: '🌴',
+          price: 'From $599',
+          desc: 'Customized family & honeymoon tour packages to Maldives, Bali, Turkey, Europe, Malaysia, Thailand & beyond. Hotel + flights + transfers included.',
+          description: 'Customized family & honeymoon tour packages to Maldives, Bali, Turkey, Europe, Malaysia, Thailand & beyond. Hotel + flights + transfers included.',
+          image: '/assets/cards/card3.jpg',
+          fallback: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=700&q=80'
+        },
+        {
+          id: 'card-4',
+          title: 'Visa Assistance',
+          titleFormatted: 'Visa Assistance',
+          icon: '🛂',
+          price: 'From $49',
+          desc: 'Fast visa processing for Schengen, UK, US, UAE, Saudi, Oman & GCC. Document checklist, expert review, and real-time status updates — 95% success rate.',
+          description: 'Fast visa processing for Schengen, UK, US, UAE, Saudi, Oman & GCC. Document checklist, expert review, and real-time status updates — 95% success rate.',
+          image: '/assets/cards/card4.jpg',
+          fallback: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=700&q=80'
+        },
+        {
+          id: 'card-5',
+          title: 'Dubai Experiences',
+          titleFormatted: 'Dubai Experiences',
+          icon: '🏙️',
+          price: 'From $55',
+          desc: 'Desert safari, Burj Khalifa, dhow cruise, Global Village, theme parks and more. Private & group tours available daily. Hotel pickups included.',
+          description: 'Desert safari, Burj Khalifa, dhow cruise, Global Village, theme parks and more. Private & group tours available daily. Hotel pickups included.',
+          image: '/assets/cards/card5.jpg',
+          fallback: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=700&q=80'
+        },
+        {
+          id: 'card-6',
+          title: 'Airport Transfers',
+          titleFormatted: 'Airport Transfers',
+          icon: '🚗',
+          price: 'From $45',
+          desc: 'VIP airport pick-up and drop-off with Toyota Land Cruiser, Prado, Mercedes V-Class & more. Professional chauffeurs, meet & greet, 24/7 availability.',
+          description: 'VIP airport pick-up and drop-off with Toyota Land Cruiser, Prado, Mercedes V-Class & more. Professional chauffeurs, meet & greet, 24/7 availability.',
+          image: '/assets/cards/card6.jpg',
+          fallback: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=700&q=80'
+        }
+      ];
+      this.saveData();
+    }
+    return this.data.whyChooseUs;
   }
 
   setFullContent(content) {
@@ -136,6 +213,8 @@ class DataStore {
     if (content.testimonials) this.data.testimonials = content.testimonials;
     if (content.visas) this.data.visas = content.visas;
     if (content.popups) this.data.popups = content.popups;
+    if (content.whyChooseUs) this.data.whyChooseUs = content.whyChooseUs;
+    if (content.features) this.data.whyChooseUs = content.features;
     if (content.settings) this.data.settings = content.settings;
     this.saveData();
     return this.getAllContent();

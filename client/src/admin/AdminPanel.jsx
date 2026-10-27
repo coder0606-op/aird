@@ -19,6 +19,7 @@ export default function AdminPanel() {
   const [siteData, setSiteData] = useState({
     wallpapers: [],
     attractions: [],
+    whyChooseUs: [],
     tours: [],
     transfers: [],
     gallery: [],
@@ -26,7 +27,7 @@ export default function AdminPanel() {
     reviews: [],
     settings: {
       brandName: "Air Dream",
-      brandTagline: "TRAVEL & TOURISM",
+      brandTagline: "TRAVEL TOURISM LLC",
       phone: "+971 58 833 8927",
       whatsapp: "971588338927",
       email: "sales@airdreamtravel.com",
@@ -60,6 +61,7 @@ export default function AdminPanel() {
   const [editingItemId, setEditingItemId] = useState(null);
   const [modalFormData, setModalFormData] = useState({});
   const [imagePreview, setImagePreview] = useState("");
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   // Settings Form State
   const [settingsForm, setSettingsForm] = useState(siteData.settings);
@@ -86,8 +88,16 @@ export default function AdminPanel() {
       // 1. Try fresh data from backend
       const apiRes = await api.get("/site-content");
       if (apiRes.data && Object.keys(apiRes.data).length > 0) {
-        setSiteData(apiRes.data);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(apiRes.data));
+        const data = apiRes.data;
+        if (!data.whyChooseUs || data.whyChooseUs.length === 0 || data.whyChooseUs[0]?.title === 'Global Reach') {
+          const defRes = await fetch("/data/default-data.json");
+          if (defRes.ok) {
+            const defs = await defRes.json();
+            data.whyChooseUs = defs.whyChooseUs || [];
+          }
+        }
+        setSiteData(data);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
         return;
       }
     } catch (e) {
@@ -98,6 +108,14 @@ export default function AdminPanel() {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
         const parsed = JSON.parse(stored);
+        if (!parsed.whyChooseUs || parsed.whyChooseUs.length === 0 || parsed.whyChooseUs[0]?.title === 'Global Reach' || parsed.whyChooseUs[0]?.title === 'Tour Guide') {
+          const defRes = await fetch("/data/default-data.json");
+          if (defRes.ok) {
+            const defs = await defRes.json();
+            parsed.whyChooseUs = defs.whyChooseUs || [];
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
+          }
+        }
         setSiteData(parsed);
         return;
       }
@@ -204,8 +222,12 @@ export default function AdminPanel() {
     setModalCollection(collection);
     const itemId = item.id || item._id;
     setEditingItemId(itemId);
-    setImagePreview(item.image || item.avatar || "");
-    setModalFormData({ ...item });
+    const preview = item.image || item.avatar || item.img || "";
+    setImagePreview(preview);
+    setModalFormData({
+      ...item,
+      image: item.image || item.img || preview,
+    });
     setIsModalOpen(true);
   };
 
@@ -300,32 +322,96 @@ export default function AdminPanel() {
           quote: "",
           avatar: "",
         };
+      case "whyChooseUs":
+      case "feature":
+        return {
+          title: "",
+          titleFormatted: "",
+          icon: "✈️",
+          description: "",
+          desc: "",
+          price: "From $299",
+          badge: "Featured",
+          image: "/assets/cards/card1.png",
+          fallback: "/assets/cards/card1.png",
+        };
       default:
         return {};
     }
   };
 
-  // Modal File Upload Handler (Converts file to base64 for instant local preview and persistent storage)
-  const handleModalFileUpload = (e) => {
+  // Universal Image Uploader: Posts to /api/upload with fallback to base64 DataURL
+  const uploadImageFile = async (file) => {
+    if (!file) return null;
+    if (file.size > 15 * 1024 * 1024) {
+      toast.error("File size exceeds 15MB. Please choose a smaller image.");
+      return null;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await api.post("/upload", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      if (res.data?.url) {
+        return res.data.url;
+      }
+    } catch (err) {
+      console.warn("Backend /api/upload error, falling back to local data URL:", err);
+    }
+
+    // Fallback: Read as base64 DataURL
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (evt) => resolve(evt.target.result);
+      reader.onerror = () => resolve(null);
+      reader.readAsDataURL(file);
+    });
+  };
+
+  // Modal File Upload Handler (Direct file to server or local preview)
+  const handleModalFileUpload = async (e) => {
     const file = e.target.files && e.target.files[0];
     if (!file) return;
 
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("File size exceeds 5MB. Please choose a smaller image.");
-      return;
-    }
+    const tempUrl = URL.createObjectURL(file);
+    setImagePreview(tempUrl);
+    setUploadingImage(true);
 
-    const reader = new FileReader();
-    reader.onload = (evt) => {
-      const dataUrl = evt.target.result;
-      setImagePreview(dataUrl);
-      if (modalCollection === "review") {
-        setModalFormData((prev) => ({ ...prev, avatar: dataUrl }));
-      } else {
-        setModalFormData((prev) => ({ ...prev, image: dataUrl }));
+    try {
+      const finalUrl = await uploadImageFile(file);
+      if (finalUrl) {
+        setImagePreview(finalUrl);
+        if (modalCollection === "review") {
+          setModalFormData((prev) => ({ ...prev, avatar: finalUrl }));
+        } else {
+          setModalFormData((prev) => ({ ...prev, image: finalUrl }));
+        }
+        toast.success("Card picture uploaded successfully!");
       }
-    };
-    reader.readAsDataURL(file);
+    } catch (err) {
+      toast.error("Could not process picture upload.");
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  // Settings File Upload Handler
+  const handleSettingsFileUpload = async (field, file) => {
+    if (!file) return;
+    toast.loading("Uploading image...", { id: "settings-upload" });
+    try {
+      const finalUrl = await uploadImageFile(file);
+      toast.dismiss("settings-upload");
+      if (finalUrl) {
+        setSettingsForm((prev) => ({ ...prev, [field]: finalUrl }));
+        toast.success("Image updated successfully!");
+      }
+    } catch (err) {
+      toast.dismiss("settings-upload");
+      toast.error("Error updating image.");
+    }
   };
 
   // Submit Modal Form
@@ -340,6 +426,8 @@ export default function AdminPanel() {
       transfer: "transfers",
       package: "packages",
       review: "reviews",
+      whyChooseUs: "whyChooseUs",
+      feature: "whyChooseUs",
     };
     const collectionKey = collKeyMap[modalCollection];
     const currentList = [...(siteData[collectionKey] || [])];
@@ -371,56 +459,72 @@ export default function AdminPanel() {
     };
     saveSiteData(updatedSiteData);
 
-    // Backend Synchronisation Attempt (Gracefully handled if offline or endpoint differs)
+    // Backend Synchronisation Attempt across all endpoints
     try {
-      if (modalCollection === "wallpaper") {
+      if (modalCollection === "whyChooseUs" || modalCollection === "feature") {
+        if (!editingItemId) {
+          api.post("/why-choose-us", modalFormData).catch(() => {});
+        } else {
+          api.put(`/why-choose-us/${editingItemId}`, modalFormData).catch(() => {});
+        }
+      } else if (modalCollection === "wallpaper") {
         if (!editingItemId) {
           api.post("/wallpapers", modalFormData).catch(() => {});
         } else {
-          api
-            .put(`/wallpapers/${editingItemId}`, modalFormData)
-            .catch(() => {});
+          api.put(`/wallpapers/${editingItemId}`, modalFormData).catch(() => {});
         }
       } else if (modalCollection === "attraction") {
         if (!editingItemId) {
-          api
-            .post("/activities", {
-              title: modalFormData.name,
-              price:
-                parseFloat(
-                  (modalFormData.price || "0").replace(/[^0-9.]/g, ""),
-                ) || 50,
-              images: [modalFormData.image],
-            })
-            .catch(() => {});
+          api.post("/activities", {
+            name: modalFormData.name,
+            title: modalFormData.name,
+            activities: modalFormData.activities,
+            price: parseFloat((modalFormData.price || "0").replace(/[^0-9.]/g, "")) || 50,
+            image: modalFormData.image,
+            images: [modalFormData.image],
+          }).catch(() => {});
+        } else {
+          api.put(`/activities/${editingItemId}`, modalFormData).catch(() => {});
         }
       } else if (modalCollection === "tour") {
         if (!editingItemId) {
-          api
-            .post("/tours", {
-              title: modalFormData.title,
-              price:
-                parseFloat(
-                  (modalFormData.price || "0").replace(/[^0-9.]/g, ""),
-                ) || 100,
-              images: [modalFormData.image],
-            })
-            .catch(() => {});
+          api.post("/tours", modalFormData).catch(() => {});
+        } else {
+          api.put(`/tours/${editingItemId}`, modalFormData).catch(() => {});
+        }
+      } else if (modalCollection === "transfer") {
+        if (!editingItemId) {
+          api.post("/transfers", modalFormData).catch(() => {});
+        } else {
+          api.put(`/transfers/${editingItemId}`, modalFormData).catch(() => {});
+        }
+      } else if (modalCollection === "gallery") {
+        if (!editingItemId) {
+          api.post("/gallery", modalFormData).catch(() => {});
+        } else {
+          api.put(`/gallery/${editingItemId}`, modalFormData).catch(() => {});
+        }
+      } else if (modalCollection === "package") {
+        if (!editingItemId) {
+          api.post("/travel-deals", modalFormData).catch(() => {});
+        } else {
+          api.put(`/travel-deals/${editingItemId}`, modalFormData).catch(() => {});
         }
       } else if (modalCollection === "review") {
         if (!editingItemId) {
-          api
-            .post("/testimonials", {
-              name: modalFormData.name,
-              title: "Customer Review",
-              review: modalFormData.quote,
-              rating: modalFormData.stars || 5,
-            })
-            .catch(() => {});
+          api.post("/testimonials", {
+            name: modalFormData.name,
+            quote: modalFormData.quote,
+            review: modalFormData.quote,
+            avatar: modalFormData.avatar,
+            rating: modalFormData.stars || 5,
+          }).catch(() => {});
+        } else {
+          api.put(`/testimonials/${editingItemId}`, modalFormData).catch(() => {});
         }
       }
     } catch (e) {
-      // Silent catch
+      // Graceful fallback
     }
 
     closeModal();
@@ -441,6 +545,30 @@ export default function AdminPanel() {
         ...siteData,
         [collectionKey]: updatedList,
       });
+
+      // Synchronize deletion with backend endpoints
+      try {
+        if (collectionKey === "whyChooseUs") {
+          api.delete(`/why-choose-us/${itemId}`).catch(() => {});
+        } else if (collectionKey === "wallpapers") {
+          api.delete(`/wallpapers/${itemId}`).catch(() => {});
+        } else if (collectionKey === "attractions") {
+          api.delete(`/activities/${itemId}`).catch(() => {});
+        } else if (collectionKey === "tours") {
+          api.delete(`/tours/${itemId}`).catch(() => {});
+        } else if (collectionKey === "transfers") {
+          api.delete(`/transfers/${itemId}`).catch(() => {});
+        } else if (collectionKey === "gallery") {
+          api.delete(`/gallery/${itemId}`).catch(() => {});
+        } else if (collectionKey === "packages") {
+          api.delete(`/travel-deals/${itemId}`).catch(() => {});
+        } else if (collectionKey === "reviews") {
+          api.delete(`/testimonials/${itemId}`).catch(() => {});
+        }
+      } catch (err) {
+        // Fallback handled locally
+      }
+
       toast.success("Item deleted successfully.");
     }
   };
@@ -597,11 +725,15 @@ export default function AdminPanel() {
   const tabTitles = {
     dashboard: {
       title: "Dashboard Overview",
-      desc: "Real-time website management for Air Dream Travel & Tourism",
+      desc: "Real-time website management for Air Dream Travel Tourism LLC",
     },
     wallpapers: {
       title: "Home Wallpapers & Hero Slides",
       desc: "Customize the full-screen background wallpapers, titles, badges, and action buttons",
+    },
+    whyChooseUs: {
+      title: "Why Choose Us / Feature Cards",
+      desc: "Customize the feature cards (Tour Guide, Friendly Price, Reliable Tour, 24/7 Support) with pictures, badges, and pricing",
     },
     attractions: {
       title: "Top Dubai Attractions",
@@ -687,12 +819,9 @@ export default function AdminPanel() {
               }}
             />
             <div className="air-dream-brand-text">
-              <span className="air-dream-brand-name">
-                {siteData.settings?.brandName || "Air Dream"}
-              </span>
-              <span className="air-dream-brand-sub">
-                {siteData.settings?.brandTagline || "TRAVEL & TOURISM"}
-              </span>
+              <span className="air-dream-brand-name">Air Dream</span>
+              <span className="air-dream-brand-sub">TRAVEL TOURISM</span>
+              <span className="air-dream-brand-llc">LLC</span>
             </div>
           </Link>
         </div>
@@ -727,6 +856,22 @@ export default function AdminPanel() {
             </span>
             <span className="tab-badge">
               {siteData.wallpapers?.length || 0}
+            </span>
+          </button>
+
+          <button
+            type="button"
+            className={`sidebar-tab-btn ${activeTab === "whyChooseUs" ? "active" : ""}`}
+            onClick={() => {
+              setActiveTab("whyChooseUs");
+              setMobileMenuOpen(false);
+            }}
+          >
+            <span className="tab-btn-content">
+              <i className="fa-solid fa-wand-magic-sparkles"></i> Feature Cards
+            </span>
+            <span className="tab-badge">
+              {siteData.whyChooseUs?.length || 0}
             </span>
           </button>
 
@@ -1013,6 +1158,19 @@ export default function AdminPanel() {
 
                 <div
                   className="stat-card"
+                  onClick={() => setActiveTab("whyChooseUs")}
+                >
+                  <div className="stat-icon purple">
+                    <i className="fa-solid fa-wand-magic-sparkles"></i>
+                  </div>
+                  <div className="stat-details">
+                    <h3>{siteData.whyChooseUs?.length || 0}</h3>
+                    <p>Why Choose Us</p>
+                  </div>
+                </div>
+
+                <div
+                  className="stat-card"
                   onClick={() => setActiveTab("attractions")}
                 >
                   <div className="stat-icon teal">
@@ -1091,6 +1249,14 @@ export default function AdminPanel() {
                   >
                     <i className="fa-solid fa-plus text-primary"></i> Add Hero
                     Wallpaper
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-admin btn-admin-outline"
+                    onClick={() => openAddModal("whyChooseUs")}
+                  >
+                    <i className="fa-solid fa-plus text-purple"></i> Add Feature
+                    Card
                   </button>
                   <button
                     type="button"
@@ -1358,6 +1524,118 @@ export default function AdminPanel() {
                             className="btn-card-action btn-delete"
                             onClick={() =>
                               handleDeleteItem("wallpapers", id, slide.title)
+                            }
+                          >
+                            <i className="fa-solid fa-trash-can"></i> Delete
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+          )}
+
+          {/* TAB: WHY CHOOSE US / FEATURE CARDS */}
+          {activeTab === "whyChooseUs" && (
+            <section className="tab-pane active" id="pane-why-choose-us">
+              <div className="view-header">
+                <div className="view-header-title">
+                  <h2>
+                    <i className="fa-solid fa-wand-magic-sparkles text-primary"></i>{" "}
+                    Why Choose Us / Feature Cards
+                  </h2>
+                  <p>
+                    Customize the 4 highlight feature cards with picture, icon, badge, price, and description
+                  </p>
+                </div>
+                <div className="view-header-actions">
+                  <button
+                    type="button"
+                    className="btn-admin btn-admin-primary"
+                    onClick={() => openAddModal("whyChooseUs")}
+                  >
+                    <i className="fa-solid fa-plus"></i> Add Feature Card
+                  </button>
+                </div>
+              </div>
+
+              <div className="items-grid">
+                {(siteData.whyChooseUs || []).map((card) => {
+                  const id = card.id || card._id;
+                  const cardImg = card.image || card.img || card.fallback || "/assets/cards/card1.png";
+                  return (
+                    <div className="item-card" key={id}>
+                      <div className="item-card-image">
+                        <img
+                          src={cardImg}
+                          alt={card.title}
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = card.fallback || "/assets/cards/card1.png";
+                          }}
+                        />
+                        {card.badge && (
+                          <span className="item-badge-pill">
+                            <i className="fa-solid fa-star" style={{ marginRight: "4px" }}></i>
+                            {card.badge}
+                          </span>
+                        )}
+                        {card.price && (
+                          <span className="item-price-tag">{card.price}</span>
+                        )}
+                      </div>
+                      <div className="item-card-body">
+                        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
+                          <span
+                            style={{
+                              width: "32px",
+                              height: "32px",
+                              borderRadius: "8px",
+                              background: "rgba(0, 75, 135, 0.1)",
+                              color: "#004b87",
+                              display: "inline-flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              fontSize: "1.1rem",
+                              flexShrink: 0,
+                            }}
+                          >
+                            {card.icon && card.icon.startsWith("fa-") ? (
+                              <i className={card.icon}></i>
+                            ) : (
+                              <span>{card.icon || "✈️"}</span>
+                            )}
+                          </span>
+                          <h4 className="item-card-title" style={{ margin: 0, fontSize: "1.05rem" }}>
+                            {card.title}
+                          </h4>
+                        </div>
+                        <p
+                          className="item-card-sub"
+                          style={{
+                            fontSize: "0.85rem",
+                            lineHeight: "1.45",
+                            color: "#475569",
+                            marginBottom: "14px",
+                          }}
+                        >
+                          {card.description || card.desc}
+                        </p>
+                        <div className="item-card-actions">
+                          <button
+                            type="button"
+                            className="btn-card-action btn-edit"
+                            onClick={() => openEditModal("whyChooseUs", card)}
+                          >
+                            <i className="fa-solid fa-pen-to-square"></i> Edit
+                          </button>
+                          <button
+                            type="button"
+                            className="btn-card-action btn-delete"
+                            onClick={() =>
+                              handleDeleteItem("whyChooseUs", id, card.title)
                             }
                           >
                             <i className="fa-solid fa-trash-can"></i> Delete
@@ -2228,13 +2506,7 @@ export default function AdminPanel() {
                             onChange={(e) => {
                               const file = e.target.files && e.target.files[0];
                               if (file) {
-                                const reader = new FileReader();
-                                reader.onload = (evt) =>
-                                  setSettingsForm({
-                                    ...settingsForm,
-                                    logoUrl: evt.target.result,
-                                  });
-                                reader.readAsDataURL(file);
+                                handleSettingsFileUpload("logoUrl", file);
                               }
                             }}
                           />
@@ -2409,13 +2681,7 @@ export default function AdminPanel() {
                             onChange={(e) => {
                               const file = e.target.files && e.target.files[0];
                               if (file) {
-                                const reader = new FileReader();
-                                reader.onload = (evt) =>
-                                  setSettingsForm({
-                                    ...settingsForm,
-                                    aboutArchImg: evt.target.result,
-                                  });
-                                reader.readAsDataURL(file);
+                                handleSettingsFileUpload("aboutArchImg", file);
                               }
                             }}
                           />
@@ -2432,119 +2698,128 @@ export default function AdminPanel() {
                   <div className="form-grid-2">
                     <div className="form-field">
                       <label>Bubble 1: Waterfalls / Landmark</label>
-                      <div className="image-input-controls">
-                        <input
-                          type="text"
-                          className="form-control"
-                          value={settingsForm.bubble1Img || ""}
-                          placeholder="https://..."
-                          style={{ flex: 1 }}
-                          onChange={(e) =>
-                            setSettingsForm({
-                              ...settingsForm,
-                              bubble1Img: e.target.value,
-                            })
-                          }
-                        />
-                        <label className="file-upload-btn-label">
-                          <i className="fa-solid fa-cloud-arrow-up"></i> Upload
+                      <div className="image-input-group">
+                        <div className="image-preview-box" style={{ height: "80px", marginBottom: "8px" }}>
+                          {settingsForm.bubble1Img ? (
+                            <img src={settingsForm.bubble1Img} alt="Bubble 1" style={{ maxHeight: "100%", maxWidth: "100%", objectFit: "cover" }} />
+                          ) : (
+                            <span className="image-preview-placeholder"><i className="fa-regular fa-image"></i> Bubble 1</span>
+                          )}
+                        </div>
+                        <div className="image-input-controls">
                           <input
-                            type="file"
-                            accept="image/*"
-                            style={{ display: "none" }}
-                            onChange={(e) => {
-                              const file = e.target.files && e.target.files[0];
-                              if (file) {
-                                const reader = new FileReader();
-                                reader.onload = (evt) =>
-                                  setSettingsForm({
-                                    ...settingsForm,
-                                    bubble1Img: evt.target.result,
-                                  });
-                                reader.readAsDataURL(file);
-                              }
-                            }}
+                            type="text"
+                            className="form-control"
+                            value={settingsForm.bubble1Img || ""}
+                            placeholder="https://..."
+                            style={{ flex: 1 }}
+                            onChange={(e) =>
+                              setSettingsForm({
+                                ...settingsForm,
+                                bubble1Img: e.target.value,
+                              })
+                            }
                           />
-                        </label>
+                          <label className="file-upload-btn-label">
+                            <i className="fa-solid fa-cloud-arrow-up"></i> Upload
+                            <input
+                              type="file"
+                              accept="image/*"
+                              style={{ display: "none" }}
+                              onChange={(e) => {
+                                const file = e.target.files && e.target.files[0];
+                                if (file) {
+                                  handleSettingsFileUpload("bubble1Img", file);
+                                }
+                              }}
+                            />
+                          </label>
+                        </div>
                       </div>
                     </div>
 
                     <div className="form-field">
                       <label>Bubble 2: Coastline / Beach</label>
-                      <div className="image-input-controls">
-                        <input
-                          type="text"
-                          className="form-control"
-                          value={settingsForm.bubble2Img || ""}
-                          placeholder="https://..."
-                          style={{ flex: 1 }}
-                          onChange={(e) =>
-                            setSettingsForm({
-                              ...settingsForm,
-                              bubble2Img: e.target.value,
-                            })
-                          }
-                        />
-                        <label className="file-upload-btn-label">
-                          <i className="fa-solid fa-cloud-arrow-up"></i> Upload
+                      <div className="image-input-group">
+                        <div className="image-preview-box" style={{ height: "80px", marginBottom: "8px" }}>
+                          {settingsForm.bubble2Img ? (
+                            <img src={settingsForm.bubble2Img} alt="Bubble 2" style={{ maxHeight: "100%", maxWidth: "100%", objectFit: "cover" }} />
+                          ) : (
+                            <span className="image-preview-placeholder"><i className="fa-regular fa-image"></i> Bubble 2</span>
+                          )}
+                        </div>
+                        <div className="image-input-controls">
                           <input
-                            type="file"
-                            accept="image/*"
-                            style={{ display: "none" }}
-                            onChange={(e) => {
-                              const file = e.target.files && e.target.files[0];
-                              if (file) {
-                                const reader = new FileReader();
-                                reader.onload = (evt) =>
-                                  setSettingsForm({
-                                    ...settingsForm,
-                                    bubble2Img: evt.target.result,
-                                  });
-                                reader.readAsDataURL(file);
-                              }
-                            }}
+                            type="text"
+                            className="form-control"
+                            value={settingsForm.bubble2Img || ""}
+                            placeholder="https://..."
+                            style={{ flex: 1 }}
+                            onChange={(e) =>
+                              setSettingsForm({
+                                ...settingsForm,
+                                bubble2Img: e.target.value,
+                              })
+                            }
                           />
-                        </label>
+                          <label className="file-upload-btn-label">
+                            <i className="fa-solid fa-cloud-arrow-up"></i> Upload
+                            <input
+                              type="file"
+                              accept="image/*"
+                              style={{ display: "none" }}
+                              onChange={(e) => {
+                                const file = e.target.files && e.target.files[0];
+                                if (file) {
+                                  handleSettingsFileUpload("bubble2Img", file);
+                                }
+                              }}
+                            />
+                          </label>
+                        </div>
                       </div>
                     </div>
                   </div>
 
                   <div className="form-field">
                     <label>Bubble 3: Desert / Excursion</label>
-                    <div className="image-input-controls">
-                      <input
-                        type="text"
-                        className="form-control"
-                        value={settingsForm.bubble3Img || ""}
-                        placeholder="https://..."
-                        style={{ flex: 1 }}
-                        onChange={(e) =>
-                          setSettingsForm({
-                            ...settingsForm,
-                            bubble3Img: e.target.value,
-                          })
-                        }
-                      />
-                      <label className="file-upload-btn-label">
-                        <i className="fa-solid fa-cloud-arrow-up"></i> Upload
+                    <div className="image-input-group">
+                      <div className="image-preview-box" style={{ height: "80px", marginBottom: "8px" }}>
+                        {settingsForm.bubble3Img ? (
+                          <img src={settingsForm.bubble3Img} alt="Bubble 3" style={{ maxHeight: "100%", maxWidth: "100%", objectFit: "cover" }} />
+                        ) : (
+                          <span className="image-preview-placeholder"><i className="fa-regular fa-image"></i> Bubble 3</span>
+                        )}
+                      </div>
+                      <div className="image-input-controls">
                         <input
-                          type="file"
-                          accept="image/*"
-                          style={{ display: "none" }}
-                          onChange={(e) => {
-                            const file = e.target.files && e.target.files[0];
-                            if (file) {
-                              const reader = new FileReader();
-                              reader.onload = (evt) =>
-                                setSettingsForm({
-                                  ...settingsForm,
-                                  bubble3Img: evt.target.result,
-                                });
-                              reader.readAsDataURL(file);
-                            }
-                          }}
+                          type="text"
+                          className="form-control"
+                          value={settingsForm.bubble3Img || ""}
+                          placeholder="https://..."
+                          style={{ flex: 1 }}
+                          onChange={(e) =>
+                            setSettingsForm({
+                              ...settingsForm,
+                              bubble3Img: e.target.value,
+                            })
+                          }
                         />
-                      </label>
+                        <label className="file-upload-btn-label">
+                          <i className="fa-solid fa-cloud-arrow-up"></i> Upload
+                          <input
+                            type="file"
+                            accept="image/*"
+                            style={{ display: "none" }}
+                            onChange={(e) => {
+                              const file = e.target.files && e.target.files[0];
+                              if (file) {
+                                handleSettingsFileUpload("bubble3Img", file);
+                              }
+                            }}
+                          />
+                        </label>
+                      </div>
                     </div>
                   </div>
 
@@ -2628,59 +2903,158 @@ export default function AdminPanel() {
               <div className="form-field">
                 <label>Featured Image URL or Upload</label>
                 <div className="image-input-group">
-                  <div
-                    className="image-preview-box"
-                    style={{ height: "120px" }}
-                  >
-                    {imagePreview ? (
-                      <img
-                        src={imagePreview}
-                        alt="Preview"
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "cover",
+                    <div
+                      className="image-preview-box"
+                      style={{ height: "120px", position: "relative" }}
+                    >
+                      {uploadingImage ? (
+                        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "8px", color: "#0284c7" }}>
+                          <i className="fa-solid fa-circle-notch fa-spin" style={{ fontSize: "1.6rem" }}></i>
+                          <span style={{ fontSize: "0.82rem", fontWeight: 600 }}>Uploading image...</span>
+                        </div>
+                      ) : imagePreview ? (
+                        <img
+                          src={imagePreview}
+                          alt="Preview"
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover",
+                          }}
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = "/image/air2.jpg";
+                          }}
+                        />
+                      ) : (
+                        <span className="image-preview-placeholder">
+                          <i className="fa-regular fa-image"></i> Image Preview
+                        </span>
+                      )}
+                    </div>
+                    <div className="image-input-controls">
+                      <input
+                        type="text"
+                        className="form-control"
+                        value={
+                          modalCollection === "review"
+                            ? modalFormData.avatar || ""
+                            : modalFormData.image || ""
+                        }
+                        placeholder="https://..."
+                        style={{ flex: 1 }}
+                        onChange={(e) => {
+                          const url = e.target.value;
+                          setImagePreview(url);
+                          if (modalCollection === "review") {
+                            setModalFormData({ ...modalFormData, avatar: url });
+                          } else {
+                            setModalFormData({ ...modalFormData, image: url });
+                          }
                         }}
                       />
-                    ) : (
-                      <span className="image-preview-placeholder">
-                        <i className="fa-regular fa-image"></i> Image Preview
-                      </span>
-                    )}
-                  </div>
-                  <div className="image-input-controls">
-                    <input
-                      type="text"
-                      className="form-control"
-                      value={
-                        modalCollection === "review"
-                          ? modalFormData.avatar || ""
-                          : modalFormData.image || ""
-                      }
-                      placeholder="https://..."
-                      style={{ flex: 1 }}
-                      onChange={(e) => {
-                        const url = e.target.value;
-                        setImagePreview(url);
-                        if (modalCollection === "review") {
-                          setModalFormData({ ...modalFormData, avatar: url });
-                        } else {
-                          setModalFormData({ ...modalFormData, image: url });
-                        }
-                      }}
-                    />
-                    <label className="file-upload-btn-label">
-                      <i className="fa-solid fa-cloud-arrow-up"></i> Upload
-                      <input
-                        type="file"
-                        accept="image/*"
-                        style={{ display: "none" }}
-                        onChange={handleModalFileUpload}
-                      />
-                    </label>
+                      <label className="file-upload-btn-label">
+                        <i className={`fa-solid ${uploadingImage ? "fa-circle-notch fa-spin" : "fa-cloud-arrow-up"}`}></i>{" "}
+                        {uploadingImage ? "Uploading" : "Upload"}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          style={{ display: "none" }}
+                          disabled={uploadingImage}
+                          onChange={handleModalFileUpload}
+                        />
+                      </label>
+                    </div>
                   </div>
                 </div>
-              </div>
+
+                {/* DYNAMIC FIELDS: WHY CHOOSE US */}
+                {(modalCollection === "whyChooseUs" || modalCollection === "feature") && (
+                  <>
+                    <div className="form-grid-2">
+                      <div className="form-field">
+                        <label>Feature Title</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          value={modalFormData.title || ""}
+                          placeholder="e.g. Tour Guide"
+                          onChange={(e) =>
+                            setModalFormData({
+                              ...modalFormData,
+                              title: e.target.value,
+                            })
+                          }
+                          required
+                        />
+                      </div>
+                      <div className="form-field">
+                        <label>Icon Class (e.g. fa-solid fa-user-tie, fa-solid fa-tags)</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          value={modalFormData.icon || "fa-solid fa-star"}
+                          placeholder="fa-solid fa-user-tie"
+                          onChange={(e) =>
+                            setModalFormData({
+                              ...modalFormData,
+                              icon: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
+                    </div>
+                    <div className="form-grid-2">
+                      <div className="form-field">
+                        <label>Badge Pill Text (e.g. Top Rated, Best Value)</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          value={modalFormData.badge || ""}
+                          placeholder="Certified Staff"
+                          onChange={(e) =>
+                            setModalFormData({
+                              ...modalFormData,
+                              badge: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
+                      <div className="form-field">
+                        <label>Price / Tag (Optional)</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          value={modalFormData.price || ""}
+                          placeholder="Included / From $49"
+                          onChange={(e) =>
+                            setModalFormData({
+                              ...modalFormData,
+                              price: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
+                    </div>
+                    <div className="form-field">
+                      <label>Description Paragraph</label>
+                      <textarea
+                        className="form-control"
+                        rows={3}
+                        value={modalFormData.description || modalFormData.desc || ""}
+                        placeholder="Brief details about this feature or guarantee..."
+                        onChange={(e) =>
+                          setModalFormData({
+                            ...modalFormData,
+                            description: e.target.value,
+                            desc: e.target.value,
+                          })
+                        }
+                        required
+                      />
+                    </div>
+                  </>
+                )}
 
               {/* DYNAMIC FIELDS: WALLPAPER */}
               {modalCollection === "wallpaper" && (
@@ -3203,6 +3577,99 @@ export default function AdminPanel() {
                         setModalFormData({
                           ...modalFormData,
                           quote: e.target.value,
+                        })
+                      }
+                      required
+                    />
+                  </div>
+                </>
+              )}
+
+              {/* DYNAMIC FIELDS: WHY CHOOSE US / FEATURE CARDS */}
+              {(modalCollection === "whyChooseUs" || modalCollection === "feature") && (
+                <>
+                  <div className="form-field">
+                    <label>Card Title</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={modalFormData.title || ""}
+                      placeholder="e.g. Worldwide Flights"
+                      onChange={(e) =>
+                        setModalFormData({
+                          ...modalFormData,
+                          title: e.target.value,
+                        })
+                      }
+                      required
+                    />
+                  </div>
+                  <div
+                    className="form-grid-3"
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "repeat(3, 1fr)",
+                      gap: "12px",
+                    }}
+                  >
+                    <div className="form-field">
+                      <label>Icon (Emoji or FA class)</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        value={modalFormData.icon || ""}
+                        placeholder="✈️ or fa-solid fa-plane"
+                        onChange={(e) =>
+                          setModalFormData({
+                            ...modalFormData,
+                            icon: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+                    <div className="form-field">
+                      <label>Price Tag / Starting At</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        value={modalFormData.price || ""}
+                        placeholder="From $299"
+                        onChange={(e) =>
+                          setModalFormData({
+                            ...modalFormData,
+                            price: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+                    <div className="form-field">
+                      <label>Badge</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        value={modalFormData.badge || ""}
+                        placeholder="Featured"
+                        onChange={(e) =>
+                          setModalFormData({
+                            ...modalFormData,
+                            badge: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+                  </div>
+                  <div className="form-field">
+                    <label>Description Paragraph</label>
+                    <textarea
+                      className="form-control"
+                      rows={3}
+                      value={modalFormData.description || modalFormData.desc || ""}
+                      placeholder="Book cheap international flights with top airlines..."
+                      onChange={(e) =>
+                        setModalFormData({
+                          ...modalFormData,
+                          description: e.target.value,
+                          desc: e.target.value,
                         })
                       }
                       required

@@ -1,8 +1,12 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSiteData } from '../context/SiteDataContext';
+import { useAutoManualScroll } from '../hooks/useAutoManualScroll';
+import ScrollControlBar from './ScrollControlBar';
+import api from '../utils/api';
 
-const VEHICLES_DATA = [
+const DEFAULT_VEHICLES = [
   {
-    id: 1,
+    id: 'tr-1',
     title: 'Toyota Land Cruiser – 4WD SUV',
     passengers: 4,
     luggage: 4,
@@ -10,7 +14,7 @@ const VEHICLES_DATA = [
     image: '/assets/vehicles/toyota-land-cruiser.svg'
   },
   {
-    id: 2,
+    id: 'tr-2',
     title: 'Toyota Prado – Premium SUV',
     passengers: 4,
     luggage: 3,
@@ -18,7 +22,7 @@ const VEHICLES_DATA = [
     image: '/assets/vehicles/toyota-prado.svg'
   },
   {
-    id: 3,
+    id: 'tr-3',
     title: 'Nissan Altima – Sedan Car',
     passengers: 3,
     luggage: 3,
@@ -26,7 +30,7 @@ const VEHICLES_DATA = [
     image: '/assets/vehicles/nissan-altima.svg'
   },
   {
-    id: 4,
+    id: 'tr-4',
     title: 'Toyota Land Cruiser – 4WD SUV',
     passengers: 4,
     luggage: 4,
@@ -34,7 +38,7 @@ const VEHICLES_DATA = [
     image: '/assets/vehicles/toyota-land-cruiser.svg'
   },
   {
-    id: 5,
+    id: 'tr-5',
     title: 'Mercedes V-Class – VIP Chauffeur Van',
     passengers: 7,
     luggage: 7,
@@ -44,11 +48,82 @@ const VEHICLES_DATA = [
 ];
 
 export default function AirportTransferSection({ onBookTransfer }) {
+  const { siteData } = useSiteData();
+  const [transfers, setTransfers] = useState(() => {
+    if (siteData?.transfers && siteData.transfers.length > 0) {
+      return siteData.transfers;
+    }
+    return DEFAULT_VEHICLES;
+  });
+
+  const {
+    scrollPrev,
+    scrollNext,
+    hasDragged,
+    containerProps
+  } = useAutoManualScroll({ speed: 1.0, cardWidth: 306, setsCount: 4 });
+
+  const mapTransfer = (v, idx) => ({
+    id: v.id || v._id || idx,
+    title: v.title || 'VIP Transfer Fleet',
+    passengers: v.passengers || 4,
+    luggage: v.luggage || 3,
+    price: v.price
+      ? (typeof v.price === 'string' ? (v.price.includes('$') ? v.price : `$${v.price}`) : `$${v.price}`)
+      : '$65',
+    image: v.image || DEFAULT_VEHICLES[idx % DEFAULT_VEHICLES.length].image
+  });
+
+  useEffect(() => {
+    if (siteData?.transfers && siteData.transfers.length > 0) {
+      setTransfers(siteData.transfers.map(mapTransfer));
+    }
+  }, [siteData?.transfers]);
+
+  useEffect(() => {
+    const handleUpdate = (e) => {
+      if (e?.detail?.transfers && Array.isArray(e.detail.transfers)) {
+        setTransfers(e.detail.transfers.map(mapTransfer));
+      } else {
+        try {
+          const stored = localStorage.getItem('air_dream_site_data_v2');
+          if (stored) {
+            const parsed = JSON.parse(stored);
+            if (parsed.transfers?.length > 0) {
+              setTransfers(parsed.transfers.map(mapTransfer));
+              return;
+            }
+          }
+        } catch (err) {}
+
+        api.get('/transfers')
+          .then((res) => {
+            if (res.data?.length > 0) {
+              setTransfers(res.data.map(mapTransfer));
+            }
+          })
+          .catch(() => {});
+      }
+    };
+
+    window.addEventListener('airdream-data-updated', handleUpdate);
+    window.addEventListener('airdream:data_updated', handleUpdate);
+
+    return () => {
+      window.removeEventListener('airdream-data-updated', handleUpdate);
+      window.removeEventListener('airdream:data_updated', handleUpdate);
+    };
+  }, []);
+
   const renderCard = (v, keyPrefix) => (
     <div
       key={`${keyPrefix}-${v.id}`}
       className="transfer-vehicle-card"
-      onClick={() => onBookTransfer && onBookTransfer(v.title, v.price)}
+      onClick={() => {
+        if (!hasDragged()) {
+          onBookTransfer && onBookTransfer(v.title, v.price);
+        }
+      }}
     >
       <div className="transfer-vehicle-img-wrap">
         <img
@@ -88,15 +163,23 @@ export default function AirportTransferSection({ onBookTransfer }) {
   return (
     <section className="airport-transfer-section" id="transfers">
       <div className="container">
-        <div className="section-badge-center">
-          <span className="pill-badge-outline">Airport transfer</span>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px', marginBottom: '20px' }}>
+          <div className="section-badge-center" style={{ margin: 0 }}>
+            <span className="pill-badge-outline">Airport transfer</span>
+          </div>
+          <ScrollControlBar
+            onPrev={scrollPrev}
+            onNext={scrollNext}
+          />
         </div>
       </div>
 
-      <div className="transfers-marquee-container">
+      <div className="transfers-marquee-container" {...containerProps}>
         <div className="transfers-marquee-track">
-          {VEHICLES_DATA.map((v) => renderCard(v, 'v1'))}
-          {VEHICLES_DATA.map((v) => renderCard(v, 'v2'))}
+          {transfers.map((v) => renderCard(v, 'v1'))}
+          {transfers.map((v) => renderCard(v, 'v2'))}
+          {transfers.map((v) => renderCard(v, 'v3'))}
+          {transfers.map((v) => renderCard(v, 'v4'))}
         </div>
       </div>
 

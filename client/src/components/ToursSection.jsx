@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import api from '../utils/api';
+import { useAutoManualScroll } from '../hooks/useAutoManualScroll';
+import ScrollControlBar from './ScrollControlBar';
+import { useSiteData } from '../context/SiteDataContext';
 
 const DEFAULT_TOURS = [
   {
@@ -65,39 +68,90 @@ const DEFAULT_TOURS = [
 ];
 
 export default function ToursSection({ onBookTour }) {
-  const [tours, setTours] = useState(DEFAULT_TOURS);
+  const { siteData } = useSiteData();
+  const [tours, setTours] = useState(() => {
+    if (siteData?.tours && siteData.tours.length > 0) {
+      return siteData.tours;
+    }
+    return DEFAULT_TOURS;
+  });
+
+  const {
+    scrollPrev,
+    scrollNext,
+    hasDragged,
+    containerProps
+  } = useAutoManualScroll({ speed: 1.0, cardWidth: 336, setsCount: 4 });
+
+  const mapTour = (item, idx) => ({
+    id: item.id || item._id || idx,
+    title: item.title,
+    location: item.location || item.tagline || 'Dubai, UAE',
+    rating: item.rating ? `${item.rating}` : '5.0',
+    hours: item.duration || '08-Hrs',
+    carHours: item.vehicle || item.transport || '4WD Cruiser',
+    guide: item.guide || 'Driver-guide',
+    capacity: item.capacity || item.groupSize || '4',
+    price: item.price
+      ? (typeof item.price === 'string' ? item.price : `$${item.price}`)
+      : DEFAULT_TOURS[idx % DEFAULT_TOURS.length].price,
+    image:
+      item.image ||
+      item.coverImage ||
+      (item.images && item.images[0]) ||
+      DEFAULT_TOURS[idx % DEFAULT_TOURS.length].image
+  });
 
   useEffect(() => {
-    api.get('/tours')
-      .then((res) => {
-        if (res.data?.length > 0) {
-          const mapped = res.data.map((item, idx) => ({
-            id: item._id || idx,
-            title: item.title,
-            location: item.location || 'Dubai, UAE',
-            rating: item.rating ? `${item.rating}.0` : '5.0',
-            hours: item.duration ? `${item.duration} Hrs` : '08-Hrs',
-            carHours: item.transport || 'A/C Transfer',
-            guide: item.guide || 'Driver-guide',
-            capacity: item.groupSize || '3',
-            price: item.price ? `$${item.price}` : DEFAULT_TOURS[idx % DEFAULT_TOURS.length].price,
-            image:
-              item.coverImage ||
-              item.image ||
-              (item.images && item.images[0]) ||
-              DEFAULT_TOURS[idx % DEFAULT_TOURS.length].image
-          }));
-          setTours(mapped);
-        }
-      })
-      .catch(() => {});
+    if (siteData?.tours && siteData.tours.length > 0) {
+      setTours(siteData.tours.map(mapTour));
+    }
+  }, [siteData?.tours]);
+
+  useEffect(() => {
+    const handleUpdate = (e) => {
+      if (e?.detail?.tours && Array.isArray(e.detail.tours)) {
+        setTours(e.detail.tours.map(mapTour));
+      } else {
+        try {
+          const stored = localStorage.getItem('air_dream_site_data_v2');
+          if (stored) {
+            const parsed = JSON.parse(stored);
+            if (parsed.tours?.length > 0) {
+              setTours(parsed.tours.map(mapTour));
+              return;
+            }
+          }
+        } catch (err) {}
+
+        api.get('/tours')
+          .then((res) => {
+            if (res.data?.length > 0) {
+              setTours(res.data.map(mapTour));
+            }
+          })
+          .catch(() => {});
+      }
+    };
+
+    window.addEventListener('airdream-data-updated', handleUpdate);
+    window.addEventListener('airdream:data_updated', handleUpdate);
+
+    return () => {
+      window.removeEventListener('airdream-data-updated', handleUpdate);
+      window.removeEventListener('airdream:data_updated', handleUpdate);
+    };
   }, []);
 
   const renderCard = (tour, keyPrefix) => (
     <div
       key={`${keyPrefix}-${tour.id}`}
       className="tour-trip-card"
-      onClick={() => onBookTour && onBookTour(tour.title, tour.price)}
+      onClick={() => {
+        if (!hasDragged()) {
+          onBookTour && onBookTour(tour.title, tour.price);
+        }
+      }}
     >
       <div className="tour-card-img-wrap">
         <img
@@ -154,15 +208,23 @@ export default function ToursSection({ onBookTour }) {
   return (
     <section className="tours-trips-section" id="tours">
       <div className="container">
-        <div className="section-badge-center">
-          <span className="pill-badge-outline">Tour - Trips</span>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px', marginBottom: '20px' }}>
+          <div className="section-badge-center" style={{ margin: 0 }}>
+            <span className="pill-badge-outline">Tour - Trips</span>
+          </div>
+          <ScrollControlBar
+            onPrev={scrollPrev}
+            onNext={scrollNext}
+          />
         </div>
       </div>
 
-      <div className="tours-marquee-container">
+      <div className="tours-marquee-container" {...containerProps}>
         <div className="tours-marquee-track">
           {tours.map((t) => renderCard(t, 't1'))}
           {tours.map((t) => renderCard(t, 't2'))}
+          {tours.map((t) => renderCard(t, 't3'))}
+          {tours.map((t) => renderCard(t, 't4'))}
         </div>
       </div>
 
