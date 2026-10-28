@@ -75,11 +75,37 @@ if (fs.existsSync(uploadsDir)) {
   app.use("/uploads", express.static(uploadsDir));
 }
 
-// Normalize URL in case Vercel rewrote the path to include /server.js
+// Normalize URL in case Vercel rewrote the path to include /server.js or file path
 app.use((req, res, next) => {
+  // 1. Strip file-based routing prefix if Vercel prepended it
   if (req.url.startsWith("/server.js")) {
-    req.url = req.url.replace(/^\/server\.js/, "") || "/";
+    req.url = req.url.slice("/server.js".length) || "/";
+  } else if (req.url.startsWith("/server/server.js")) {
+    req.url = req.url.slice("/server/server.js".length) || "/";
+  } else if (req.url.startsWith("/api/index.js")) {
+    req.url = req.url.slice("/api/index.js".length) || "/";
   }
+
+  // 2. If req.url was flattened to "/" or empty, but originalUrl has the actual subpath, restore it
+  if (
+    (req.url === "/" || req.url === "") &&
+    req.originalUrl &&
+    req.originalUrl !== "/" &&
+    !req.originalUrl.includes("server.js")
+  ) {
+    req.url = req.originalUrl;
+  }
+
+  // 3. Fallback: check headers if Vercel passed the matched path
+  if (
+    (req.url === "/" || req.url === "") &&
+    req.headers["x-matched-path"] &&
+    req.headers["x-matched-path"] !== "/" &&
+    !req.headers["x-matched-path"].includes("server.js")
+  ) {
+    req.url = req.headers["x-matched-path"];
+  }
+
   next();
 });
 
