@@ -1072,51 +1072,6 @@ textarea.form-control {
   box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.04);
 }
 
-.admin-modal-card .form-grid-2 {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
-  width: 100%;
-  margin-bottom: 14px;
-}
-
-.admin-modal-card .form-grid-3 {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-  width: 100%;
-  margin-bottom: 14px;
-}
-
-.admin-modal-card .form-field {
-  min-width: 0;
-  width: 100%;
-  margin-bottom: 14px;
-}
-
-.admin-modal-card .form-field label {
-  word-break: break-word;
-  overflow-wrap: break-word;
-  white-space: normal;
-  display: block;
-  font-size: 0.84rem;
-  font-weight: 600;
-  color: #334155;
-  margin-bottom: 6px;
-}
-
-.admin-modal-card .form-control {
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-}
-
-.admin-modal-card .image-input-group,
-.admin-modal-card .image-input-controls {
-  max-width: 100%;
-  box-sizing: border-box;
-}
-
 /* ==========================================================================
    EXACT BUTTON DESIGN MATCH FOR CANCEL & SAVE CHANGES (DATA ADD / EDIT)
    ========================================================================== */

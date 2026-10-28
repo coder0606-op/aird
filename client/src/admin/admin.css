@@ -984,31 +984,19 @@ textarea.form-control {
 .admin-modal-card {
   background: #fff;
   border-radius: var(--ad-radius-lg);
-  width: 95%;
-  max-width: 620px;
+  width: 100%;
+  max-width: 580px;
   max-height: 90vh;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
+  box-shadow: var(--ad-shadow-xl);
   overflow: hidden;
-  position: relative;
   animation: modalSlideUp 0.25s ease-out;
 }
 
 @keyframes modalSlideUp {
   from { transform: translateY(20px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
-}
-
-.admin-modal-card form {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-height: 0;
-  height: 100%;
-  overflow: hidden;
-  margin: 0;
-  padding: 0;
 }
 
 .admin-modal-card .modal-header {
@@ -1018,14 +1006,12 @@ textarea.form-control {
   align-items: center;
   justify-content: space-between;
   background: #fafafa;
-  flex-shrink: 0;
 }
 
 .modal-header h3 {
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   font-weight: 700;
   color: var(--ad-gray-900);
-  margin: 0;
 }
 
 .modal-close-x {
@@ -1040,7 +1026,6 @@ textarea.form-control {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
 }
 
 .modal-close-x:hover {
@@ -1049,27 +1034,19 @@ textarea.form-control {
 }
 
 .admin-modal-card .modal-body {
-  padding: 22px 26px;
+  padding: 24px;
   overflow-y: auto;
-  overflow-x: hidden;
   flex: 1;
-  min-height: 0;
-  max-height: calc(90vh - 140px);
 }
 
 .admin-modal-card .modal-footer {
-  flex-shrink: 0;
-  padding: 16px 26px;
+  padding: 18px 24px;
   border-top: 1px solid var(--ad-gray-200);
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 12px;
+  gap: 14px;
   background: #ffffff;
-  position: sticky;
-  bottom: 0;
-  z-index: 20;
-  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.04);
 }
 
 /* ==========================================================================
