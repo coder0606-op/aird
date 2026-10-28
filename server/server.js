@@ -75,22 +75,35 @@ if (fs.existsSync(uploadsDir)) {
   app.use("/uploads", express.static(uploadsDir));
 }
 
-// Mount routes
-app.use("/api/auth", authRoutes);
-app.use("/api/upload", uploadRoutes);
-app.use("/api/why-choose-us", whyChooseUsRoutes);
-app.use("/api/tours", tourRoutes);
-app.use("/api/visas", visaRoutes);
-app.use("/api/activities", activityRoutes);
-app.use("/api/testimonials", testimonialRoutes);
-app.use("/api/enquiries", enquiryRoutes);
-app.use("/api/popups", popupRoutes);
-app.use("/api/travel-deals", travelDealRoutes);
-app.use("/api/site-content", siteContentRoutes);
-app.use("/api/settings", settingRoutes);
-app.use("/api/wallpapers", wallpaperRoutes);
-app.use("/api/transfers", transferRoutes);
-app.use("/api/gallery", galleryRoutes);
+// Normalize URL in case Vercel rewrote the path to include /server.js
+app.use((req, res, next) => {
+  if (req.url.startsWith("/server.js")) {
+    req.url = req.url.replace(/^\/server\.js/, "") || "/";
+  }
+  next();
+});
+
+// Helper to mount all routes under a prefix
+const mountAllRoutes = (prefix = "") => {
+  app.use(`${prefix}/auth`, authRoutes);
+  app.use(`${prefix}/upload`, uploadRoutes);
+  app.use(`${prefix}/why-choose-us`, whyChooseUsRoutes);
+  app.use(`${prefix}/tours`, tourRoutes);
+  app.use(`${prefix}/visas`, visaRoutes);
+  app.use(`${prefix}/activities`, activityRoutes);
+  app.use(`${prefix}/testimonials`, testimonialRoutes);
+  app.use(`${prefix}/enquiries`, enquiryRoutes);
+  app.use(`${prefix}/popups`, popupRoutes);
+  app.use(`${prefix}/travel-deals`, travelDealRoutes);
+  app.use(`${prefix}/site-content`, siteContentRoutes);
+  app.use(`${prefix}/settings`, settingRoutes);
+  app.use(`${prefix}/wallpapers`, wallpaperRoutes);
+  app.use(`${prefix}/transfers`, transferRoutes);
+  app.use(`${prefix}/gallery`, galleryRoutes);
+};
+
+mountAllRoutes("/api");
+mountAllRoutes("");
 
 app.get("/", (req, res) => {
   res.send("Air Dream Travel & Tourism API is running perfectly...");
