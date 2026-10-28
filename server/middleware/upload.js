@@ -1,29 +1,22 @@
-const multer = require('multer');
-const path = require('path');
+const multer = require("multer");
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/');
-  },
-  filename: function (req, file, cb) {
-    cb(null, `${Date.now()}-${file.originalname}`);
-  }
-});
+// Memory storage keeps file buffers in RAM, completely safe for serverless / read-only filesystems
+const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
-  if (file.mimetype.startsWith('image/')) {
+  if (file.mimetype.startsWith("image/")) {
     cb(null, true);
   } else {
-    cb(new Error('Not an image! Please upload only images.'), false);
+    cb(new Error("Only image files are allowed!"), false);
   }
 };
 
 const upload = multer({
   storage: storage,
   limits: {
-    fileSize: 1024 * 1024 * 5 // 5MB
+    fileSize: 15 * 1024 * 1024, // 15MB
   },
-  fileFilter: fileFilter
+  fileFilter: fileFilter,
 });
 
 module.exports = upload;
