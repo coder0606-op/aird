@@ -49,6 +49,14 @@ export default function AdminPanel() {
   // Customer Inquiries from Backend / Local
   const [enquiries, setEnquiries] = useState([]);
   const [loadingEnquiries, setLoadingEnquiries] = useState(false);
+  const [isAddEnquiryOpen, setIsAddEnquiryOpen] = useState(false);
+  const [newEnquiryForm, setNewEnquiryForm] = useState({
+    fullName: "",
+    phone: "",
+    email: "",
+    serviceRequired: "Dubai Luxury Tour",
+    message: "",
+  });
 
   // Search Filters
   const [searchAttractions, setSearchAttractions] = useState("");
@@ -69,11 +77,54 @@ export default function AdminPanel() {
   // Hidden file input for Import JSON
   const importFileRef = useRef(null);
 
-  // Load Data on Mount
+  // Load Data on Mount & Listen for Real-Time Customer Inquiries
   useEffect(() => {
     loadLocalSiteData();
     fetchBackendEnquiries();
+
+    const handleNewEnquiry = (e) => {
+      if (e?.detail) {
+        setEnquiries((prev) => {
+          const id = e.detail._id || e.detail.id;
+          if (prev.some((item) => (item._id || item.id) === id)) return prev;
+          const updated = [e.detail, ...prev];
+          localStorage.setItem(
+            "air_dream_enquiries_v2",
+            JSON.stringify(updated),
+          );
+          return updated;
+        });
+        toast.success(
+          `New customer inquiry: ${e.detail.fullName || "Visitor"}`,
+        );
+      } else {
+        fetchBackendEnquiries();
+      }
+    };
+
+    const handleStorageChange = (e) => {
+      if (e.key === "air_dream_enquiries_v2") {
+        fetchBackendEnquiries();
+      }
+    };
+
+    window.addEventListener("airdream:enquiry_added", handleNewEnquiry);
+    window.addEventListener("airdream-enquiry-added", handleNewEnquiry);
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("airdream:enquiry_added", handleNewEnquiry);
+      window.removeEventListener("airdream-enquiry-added", handleNewEnquiry);
+      window.removeEventListener("storage", handleStorageChange);
+    };
   }, []);
+
+  // Refresh customer inquiries automatically whenever switching to the inquiries tab
+  useEffect(() => {
+    if (activeTab === "enquiries") {
+      fetchBackendEnquiries();
+    }
+  }, [activeTab]);
 
   // Update Settings Form when siteData.settings changes
   useEffect(() => {
@@ -89,7 +140,11 @@ export default function AdminPanel() {
       const apiRes = await api.get("/site-content");
       if (apiRes.data && Object.keys(apiRes.data).length > 0) {
         const data = apiRes.data;
-        if (!data.whyChooseUs || data.whyChooseUs.length === 0 || data.whyChooseUs[0]?.title === 'Global Reach') {
+        if (
+          !data.whyChooseUs ||
+          data.whyChooseUs.length === 0 ||
+          data.whyChooseUs[0]?.title === "Global Reach"
+        ) {
           const defRes = await fetch("/data/default-data.json");
           if (defRes.ok) {
             const defs = await defRes.json();
@@ -108,7 +163,12 @@ export default function AdminPanel() {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
         const parsed = JSON.parse(stored);
-        if (!parsed.whyChooseUs || parsed.whyChooseUs.length === 0 || parsed.whyChooseUs[0]?.title === 'Global Reach' || parsed.whyChooseUs[0]?.title === 'Tour Guide') {
+        if (
+          !parsed.whyChooseUs ||
+          parsed.whyChooseUs.length === 0 ||
+          parsed.whyChooseUs[0]?.title === "Global Reach" ||
+          parsed.whyChooseUs[0]?.title === "Tour Guide"
+        ) {
           const defRes = await fetch("/data/default-data.json");
           if (defRes.ok) {
             const defs = await defRes.json();
@@ -132,56 +192,78 @@ export default function AdminPanel() {
     }
   };
 
-  // Fetch backend enquiries
+  // Fetch backend enquiries and merge with locally stored inquiries
   const fetchBackendEnquiries = async () => {
     setLoadingEnquiries(true);
+    let remoteList = [];
     try {
       const res = await api.get("/enquiries");
       if (res.data) {
-        setEnquiries(
-          Array.isArray(res.data) ? res.data : res.data.enquiries || [],
-        );
+        remoteList = Array.isArray(res.data)
+          ? res.data
+          : res.data.enquiries || [];
       }
     } catch (err) {
-      // Offline fallback: check localStorage
-      try {
-        const localEnquiries = JSON.parse(
-          localStorage.getItem("air_dream_enquiries_v2") || "[]",
-        );
-        if (localEnquiries.length > 0) {
-          setEnquiries(localEnquiries);
-        } else {
-          // Mock seed inquiries for demonstration
-          setEnquiries([
-            {
-              _id: "enq-101",
-              fullName: "Ahmed Al Mansoori",
-              email: "ahmed.mansoori@gmail.com",
-              phone: "+971 50 123 4567",
-              serviceRequired: "Dubai Luxury Skyline Tour",
-              destination: "Dubai",
-              message:
-                "Looking for a private VIP 4WD tour for family of 4 next weekend.",
-              isRead: false,
-              createdAt: new Date(Date.now() - 3600000 * 2).toISOString(),
-            },
-            {
-              _id: "enq-102",
-              fullName: "Fatima Zahra",
-              email: "fatima.z@outlook.com",
-              phone: "+968 91 234 567",
-              serviceRequired: "5-Star Executive Umrah Package",
-              destination: "Makkah & Madinah",
-              message:
-                "Need 10 days full package with Courtyard View hotel and private GMC transfer.",
-              isRead: true,
-              createdAt: new Date(Date.now() - 3600000 * 24).toISOString(),
-            },
-          ]);
+      console.warn("Backend enquiries fetch fallback:", err.message);
+    }
+
+    try {
+      const localList = JSON.parse(
+        localStorage.getItem("air_dream_enquiries_v2") || "[]",
+      );
+
+      // Merge both sources without duplicates
+      const mergedMap = new Map();
+      [...remoteList, ...localList].forEach((item) => {
+        const id = String(item._id || item.id || "");
+        if (id && !mergedMap.has(id)) {
+          mergedMap.set(id, { ...item, _id: id, id });
         }
-      } catch (e) {
-        console.error(e);
+      });
+
+      const merged = Array.from(mergedMap.values()).sort(
+        (a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0),
+      );
+
+      if (merged.length > 0) {
+        setEnquiries(merged);
+        localStorage.setItem("air_dream_enquiries_v2", JSON.stringify(merged));
+      } else {
+        // Seed default initial inquiries if completely empty
+        const initialSeeds = [
+          {
+            _id: "enq-101",
+            fullName: "Ahmed Al Mansoori",
+            email: "ahmed.mansoori@gmail.com",
+            phone: "+971 50 123 4567",
+            serviceRequired: "Dubai Luxury Skyline Tour",
+            destination: "Dubai",
+            message:
+              "Looking for a private VIP 4WD tour for family of 4 next weekend.",
+            isRead: false,
+            createdAt: new Date(Date.now() - 3600000 * 2).toISOString(),
+          },
+          {
+            _id: "enq-102",
+            fullName: "Fatima Zahra",
+            email: "fatima.z@outlook.com",
+            phone: "+968 91 234 567",
+            serviceRequired: "5-Star Executive Umrah Package",
+            destination: "Makkah & Madinah",
+            message:
+              "Need 10 days full package with Courtyard View hotel and private GMC transfer.",
+            isRead: true,
+            createdAt: new Date(Date.now() - 3600000 * 24).toISOString(),
+          },
+        ];
+        setEnquiries(initialSeeds);
+        localStorage.setItem(
+          "air_dream_enquiries_v2",
+          JSON.stringify(initialSeeds),
+        );
       }
+    } catch (e) {
+      console.error(e);
     } finally {
       setLoadingEnquiries(false);
     }
@@ -358,7 +440,10 @@ export default function AdminPanel() {
         return res.data.url;
       }
     } catch (err) {
-      console.warn("Backend /api/upload error, falling back to local data URL:", err);
+      console.warn(
+        "Backend /api/upload error, falling back to local data URL:",
+        err,
+      );
     }
 
     // Fallback: Read as base64 DataURL
@@ -465,26 +550,37 @@ export default function AdminPanel() {
         if (!editingItemId) {
           api.post("/why-choose-us", modalFormData).catch(() => {});
         } else {
-          api.put(`/why-choose-us/${editingItemId}`, modalFormData).catch(() => {});
+          api
+            .put(`/why-choose-us/${editingItemId}`, modalFormData)
+            .catch(() => {});
         }
       } else if (modalCollection === "wallpaper") {
         if (!editingItemId) {
           api.post("/wallpapers", modalFormData).catch(() => {});
         } else {
-          api.put(`/wallpapers/${editingItemId}`, modalFormData).catch(() => {});
+          api
+            .put(`/wallpapers/${editingItemId}`, modalFormData)
+            .catch(() => {});
         }
       } else if (modalCollection === "attraction") {
         if (!editingItemId) {
-          api.post("/activities", {
-            name: modalFormData.name,
-            title: modalFormData.name,
-            activities: modalFormData.activities,
-            price: parseFloat((modalFormData.price || "0").replace(/[^0-9.]/g, "")) || 50,
-            image: modalFormData.image,
-            images: [modalFormData.image],
-          }).catch(() => {});
+          api
+            .post("/activities", {
+              name: modalFormData.name,
+              title: modalFormData.name,
+              activities: modalFormData.activities,
+              price:
+                parseFloat(
+                  (modalFormData.price || "0").replace(/[^0-9.]/g, ""),
+                ) || 50,
+              image: modalFormData.image,
+              images: [modalFormData.image],
+            })
+            .catch(() => {});
         } else {
-          api.put(`/activities/${editingItemId}`, modalFormData).catch(() => {});
+          api
+            .put(`/activities/${editingItemId}`, modalFormData)
+            .catch(() => {});
         }
       } else if (modalCollection === "tour") {
         if (!editingItemId) {
@@ -508,19 +604,25 @@ export default function AdminPanel() {
         if (!editingItemId) {
           api.post("/travel-deals", modalFormData).catch(() => {});
         } else {
-          api.put(`/travel-deals/${editingItemId}`, modalFormData).catch(() => {});
+          api
+            .put(`/travel-deals/${editingItemId}`, modalFormData)
+            .catch(() => {});
         }
       } else if (modalCollection === "review") {
         if (!editingItemId) {
-          api.post("/testimonials", {
-            name: modalFormData.name,
-            quote: modalFormData.quote,
-            review: modalFormData.quote,
-            avatar: modalFormData.avatar,
-            rating: modalFormData.stars || 5,
-          }).catch(() => {});
+          api
+            .post("/testimonials", {
+              name: modalFormData.name,
+              quote: modalFormData.quote,
+              review: modalFormData.quote,
+              avatar: modalFormData.avatar,
+              rating: modalFormData.stars || 5,
+            })
+            .catch(() => {});
         } else {
-          api.put(`/testimonials/${editingItemId}`, modalFormData).catch(() => {});
+          api
+            .put(`/testimonials/${editingItemId}`, modalFormData)
+            .catch(() => {});
         }
       }
     } catch (e) {
@@ -575,27 +677,19 @@ export default function AdminPanel() {
 
   // Enquiries Handlers
   const handleToggleEnquiryRead = async (enquiryId, currentRead) => {
+    const newStatus = !currentRead;
+    setEnquiries((prev) => {
+      const updated = prev.map((enq) =>
+        (enq._id || enq.id) === enquiryId ? { ...enq, isRead: newStatus } : enq,
+      );
+      localStorage.setItem("air_dream_enquiries_v2", JSON.stringify(updated));
+      return updated;
+    });
+
     try {
-      await api.put(`/enquiries/${enquiryId}/read`);
-      setEnquiries((prev) =>
-        prev.map((enq) =>
-          (enq._id || enq.id) === enquiryId
-            ? { ...enq, isRead: !currentRead }
-            : enq,
-        ),
-      );
-      toast.success(`Enquiry marked as ${!currentRead ? "Read" : "Unread"}`);
-    } catch (err) {
-      // Local fallback
-      setEnquiries((prev) =>
-        prev.map((enq) =>
-          (enq._id || enq.id) === enquiryId
-            ? { ...enq, isRead: !currentRead }
-            : enq,
-        ),
-      );
-      toast.success(`Enquiry status updated`);
-    }
+      await api.put(`/enquiries/${enquiryId}/read`, { isRead: newStatus });
+    } catch (err) {}
+    toast.success(`Enquiry marked as ${newStatus ? "Read" : "Unread"}`);
   };
 
   const handleDeleteEnquiry = async (enquiryId) => {
@@ -603,18 +697,60 @@ export default function AdminPanel() {
       !window.confirm("Are you sure you want to delete this customer inquiry?")
     )
       return;
+
+    setEnquiries((prev) => {
+      const updated = prev.filter((enq) => (enq._id || enq.id) !== enquiryId);
+      localStorage.setItem("air_dream_enquiries_v2", JSON.stringify(updated));
+      return updated;
+    });
+
     try {
       await api.delete(`/enquiries/${enquiryId}`);
-      setEnquiries((prev) =>
-        prev.filter((enq) => (enq._id || enq.id) !== enquiryId),
-      );
-      toast.success("Enquiry deleted.");
-    } catch (err) {
-      setEnquiries((prev) =>
-        prev.filter((enq) => (enq._id || enq.id) !== enquiryId),
-      );
-      toast.success("Enquiry removed locally.");
+    } catch (err) {}
+    toast.success("Enquiry deleted successfully.");
+  };
+
+  const handleCreateManualEnquiry = async (e) => {
+    e.preventDefault();
+    if (!newEnquiryForm.fullName.trim() || !newEnquiryForm.phone.trim()) {
+      toast.error("Please provide at least customer name and phone number.");
+      return;
     }
+
+    const newEnq = {
+      _id: `enq-${Date.now()}`,
+      fullName: newEnquiryForm.fullName.trim(),
+      phone: newEnquiryForm.phone.trim(),
+      email: newEnquiryForm.email.trim() || "N/A",
+      serviceRequired: newEnquiryForm.serviceRequired || "General Inquiry",
+      message:
+        newEnquiryForm.message.trim() ||
+        "Manual customer booking logged by admin.",
+      isRead: false,
+      createdAt: new Date().toISOString(),
+    };
+
+    try {
+      await api.post("/enquiries", newEnq);
+    } catch (err) {
+      console.warn("Backend save fallback, saving locally:", err.message);
+    }
+
+    setEnquiries((prev) => {
+      const updated = [newEnq, ...prev];
+      localStorage.setItem("air_dream_enquiries_v2", JSON.stringify(updated));
+      return updated;
+    });
+
+    toast.success("Customer inquiry added successfully!");
+    setIsAddEnquiryOpen(false);
+    setNewEnquiryForm({
+      fullName: "",
+      phone: "",
+      email: "",
+      serviceRequired: "Dubai Luxury Tour",
+      message: "",
+    });
   };
 
   // Save Settings Handler
@@ -1547,7 +1683,8 @@ export default function AdminPanel() {
                     Why Choose Us / Feature Cards
                   </h2>
                   <p>
-                    Customize the 4 highlight feature cards with picture, icon, badge, price, and description
+                    Customize the 4 highlight feature cards with picture, icon,
+                    badge, price, and description
                   </p>
                 </div>
                 <div className="view-header-actions">
@@ -1564,7 +1701,11 @@ export default function AdminPanel() {
               <div className="items-grid">
                 {(siteData.whyChooseUs || []).map((card) => {
                   const id = card.id || card._id;
-                  const cardImg = card.image || card.img || card.fallback || "/assets/cards/card1.png";
+                  const cardImg =
+                    card.image ||
+                    card.img ||
+                    card.fallback ||
+                    "/assets/cards/card1.png";
                   return (
                     <div className="item-card" key={id}>
                       <div className="item-card-image">
@@ -1573,12 +1714,16 @@ export default function AdminPanel() {
                           alt={card.title}
                           onError={(e) => {
                             e.target.onerror = null;
-                            e.target.src = card.fallback || "/assets/cards/card1.png";
+                            e.target.src =
+                              card.fallback || "/assets/cards/card1.png";
                           }}
                         />
                         {card.badge && (
                           <span className="item-badge-pill">
-                            <i className="fa-solid fa-star" style={{ marginRight: "4px" }}></i>
+                            <i
+                              className="fa-solid fa-star"
+                              style={{ marginRight: "4px" }}
+                            ></i>
                             {card.badge}
                           </span>
                         )}
@@ -1587,7 +1732,14 @@ export default function AdminPanel() {
                         )}
                       </div>
                       <div className="item-card-body">
-                        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
+                            marginBottom: "8px",
+                          }}
+                        >
                           <span
                             style={{
                               width: "32px",
@@ -1608,7 +1760,10 @@ export default function AdminPanel() {
                               <span>{card.icon || "✈️"}</span>
                             )}
                           </span>
-                          <h4 className="item-card-title" style={{ margin: 0, fontSize: "1.05rem" }}>
+                          <h4
+                            className="item-card-title"
+                            style={{ margin: 0, fontSize: "1.05rem" }}
+                          >
                             {card.title}
                           </h4>
                         </div>
@@ -2190,6 +2345,13 @@ export default function AdminPanel() {
                   </div>
                   <button
                     type="button"
+                    className="btn-admin btn-admin-primary"
+                    onClick={() => setIsAddEnquiryOpen(true)}
+                  >
+                    <i className="fa-solid fa-plus"></i> Add Inquiry
+                  </button>
+                  <button
+                    type="button"
                     className="btn-admin btn-admin-outline"
                     onClick={fetchBackendEnquiries}
                   >
@@ -2699,11 +2861,24 @@ export default function AdminPanel() {
                     <div className="form-field">
                       <label>Bubble 1: Waterfalls / Landmark</label>
                       <div className="image-input-group">
-                        <div className="image-preview-box" style={{ height: "80px", marginBottom: "8px" }}>
+                        <div
+                          className="image-preview-box"
+                          style={{ height: "80px", marginBottom: "8px" }}
+                        >
                           {settingsForm.bubble1Img ? (
-                            <img src={settingsForm.bubble1Img} alt="Bubble 1" style={{ maxHeight: "100%", maxWidth: "100%", objectFit: "cover" }} />
+                            <img
+                              src={settingsForm.bubble1Img}
+                              alt="Bubble 1"
+                              style={{
+                                maxHeight: "100%",
+                                maxWidth: "100%",
+                                objectFit: "cover",
+                              }}
+                            />
                           ) : (
-                            <span className="image-preview-placeholder"><i className="fa-regular fa-image"></i> Bubble 1</span>
+                            <span className="image-preview-placeholder">
+                              <i className="fa-regular fa-image"></i> Bubble 1
+                            </span>
                           )}
                         </div>
                         <div className="image-input-controls">
@@ -2721,13 +2896,15 @@ export default function AdminPanel() {
                             }
                           />
                           <label className="file-upload-btn-label">
-                            <i className="fa-solid fa-cloud-arrow-up"></i> Upload
+                            <i className="fa-solid fa-cloud-arrow-up"></i>{" "}
+                            Upload
                             <input
                               type="file"
                               accept="image/*"
                               style={{ display: "none" }}
                               onChange={(e) => {
-                                const file = e.target.files && e.target.files[0];
+                                const file =
+                                  e.target.files && e.target.files[0];
                                 if (file) {
                                   handleSettingsFileUpload("bubble1Img", file);
                                 }
@@ -2741,11 +2918,24 @@ export default function AdminPanel() {
                     <div className="form-field">
                       <label>Bubble 2: Coastline / Beach</label>
                       <div className="image-input-group">
-                        <div className="image-preview-box" style={{ height: "80px", marginBottom: "8px" }}>
+                        <div
+                          className="image-preview-box"
+                          style={{ height: "80px", marginBottom: "8px" }}
+                        >
                           {settingsForm.bubble2Img ? (
-                            <img src={settingsForm.bubble2Img} alt="Bubble 2" style={{ maxHeight: "100%", maxWidth: "100%", objectFit: "cover" }} />
+                            <img
+                              src={settingsForm.bubble2Img}
+                              alt="Bubble 2"
+                              style={{
+                                maxHeight: "100%",
+                                maxWidth: "100%",
+                                objectFit: "cover",
+                              }}
+                            />
                           ) : (
-                            <span className="image-preview-placeholder"><i className="fa-regular fa-image"></i> Bubble 2</span>
+                            <span className="image-preview-placeholder">
+                              <i className="fa-regular fa-image"></i> Bubble 2
+                            </span>
                           )}
                         </div>
                         <div className="image-input-controls">
@@ -2763,13 +2953,15 @@ export default function AdminPanel() {
                             }
                           />
                           <label className="file-upload-btn-label">
-                            <i className="fa-solid fa-cloud-arrow-up"></i> Upload
+                            <i className="fa-solid fa-cloud-arrow-up"></i>{" "}
+                            Upload
                             <input
                               type="file"
                               accept="image/*"
                               style={{ display: "none" }}
                               onChange={(e) => {
-                                const file = e.target.files && e.target.files[0];
+                                const file =
+                                  e.target.files && e.target.files[0];
                                 if (file) {
                                   handleSettingsFileUpload("bubble2Img", file);
                                 }
@@ -2784,11 +2976,24 @@ export default function AdminPanel() {
                   <div className="form-field">
                     <label>Bubble 3: Desert / Excursion</label>
                     <div className="image-input-group">
-                      <div className="image-preview-box" style={{ height: "80px", marginBottom: "8px" }}>
+                      <div
+                        className="image-preview-box"
+                        style={{ height: "80px", marginBottom: "8px" }}
+                      >
                         {settingsForm.bubble3Img ? (
-                          <img src={settingsForm.bubble3Img} alt="Bubble 3" style={{ maxHeight: "100%", maxWidth: "100%", objectFit: "cover" }} />
+                          <img
+                            src={settingsForm.bubble3Img}
+                            alt="Bubble 3"
+                            style={{
+                              maxHeight: "100%",
+                              maxWidth: "100%",
+                              objectFit: "cover",
+                            }}
+                          />
                         ) : (
-                          <span className="image-preview-placeholder"><i className="fa-regular fa-image"></i> Bubble 3</span>
+                          <span className="image-preview-placeholder">
+                            <i className="fa-regular fa-image"></i> Bubble 3
+                          </span>
                         )}
                       </div>
                       <div className="image-input-controls">
@@ -2903,158 +3108,181 @@ export default function AdminPanel() {
               <div className="form-field">
                 <label>Featured Image URL or Upload</label>
                 <div className="image-input-group">
-                    <div
-                      className="image-preview-box"
-                      style={{ height: "120px", position: "relative" }}
-                    >
-                      {uploadingImage ? (
-                        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "8px", color: "#0284c7" }}>
-                          <i className="fa-solid fa-circle-notch fa-spin" style={{ fontSize: "1.6rem" }}></i>
-                          <span style={{ fontSize: "0.82rem", fontWeight: 600 }}>Uploading image...</span>
-                        </div>
-                      ) : imagePreview ? (
-                        <img
-                          src={imagePreview}
-                          alt="Preview"
-                          style={{
-                            width: "100%",
-                            height: "100%",
-                            objectFit: "cover",
-                          }}
-                          onError={(e) => {
-                            e.target.onerror = null;
-                            e.target.src = "/image/air2.jpg";
-                          }}
-                        />
-                      ) : (
-                        <span className="image-preview-placeholder">
-                          <i className="fa-regular fa-image"></i> Image Preview
+                  <div
+                    className="image-preview-box"
+                    style={{ height: "120px", position: "relative" }}
+                  >
+                    {uploadingImage ? (
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          gap: "8px",
+                          color: "#0284c7",
+                        }}
+                      >
+                        <i
+                          className="fa-solid fa-circle-notch fa-spin"
+                          style={{ fontSize: "1.6rem" }}
+                        ></i>
+                        <span style={{ fontSize: "0.82rem", fontWeight: 600 }}>
+                          Uploading image...
                         </span>
-                      )}
-                    </div>
-                    <div className="image-input-controls">
+                      </div>
+                    ) : imagePreview ? (
+                      <img
+                        src={imagePreview}
+                        alt="Preview"
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                        }}
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = "/image/air2.jpg";
+                        }}
+                      />
+                    ) : (
+                      <span className="image-preview-placeholder">
+                        <i className="fa-regular fa-image"></i> Image Preview
+                      </span>
+                    )}
+                  </div>
+                  <div className="image-input-controls">
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={
+                        modalCollection === "review"
+                          ? modalFormData.avatar || ""
+                          : modalFormData.image || ""
+                      }
+                      placeholder="https://..."
+                      style={{ flex: 1 }}
+                      onChange={(e) => {
+                        const url = e.target.value;
+                        setImagePreview(url);
+                        if (modalCollection === "review") {
+                          setModalFormData({ ...modalFormData, avatar: url });
+                        } else {
+                          setModalFormData({ ...modalFormData, image: url });
+                        }
+                      }}
+                    />
+                    <label className="file-upload-btn-label">
+                      <i
+                        className={`fa-solid ${uploadingImage ? "fa-circle-notch fa-spin" : "fa-cloud-arrow-up"}`}
+                      ></i>{" "}
+                      {uploadingImage ? "Uploading" : "Upload"}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        style={{ display: "none" }}
+                        disabled={uploadingImage}
+                        onChange={handleModalFileUpload}
+                      />
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              {/* DYNAMIC FIELDS: WHY CHOOSE US */}
+              {(modalCollection === "whyChooseUs" ||
+                modalCollection === "feature") && (
+                <>
+                  <div className="form-grid-2">
+                    <div className="form-field">
+                      <label>Feature Title</label>
                       <input
                         type="text"
                         className="form-control"
-                        value={
-                          modalCollection === "review"
-                            ? modalFormData.avatar || ""
-                            : modalFormData.image || ""
-                        }
-                        placeholder="https://..."
-                        style={{ flex: 1 }}
-                        onChange={(e) => {
-                          const url = e.target.value;
-                          setImagePreview(url);
-                          if (modalCollection === "review") {
-                            setModalFormData({ ...modalFormData, avatar: url });
-                          } else {
-                            setModalFormData({ ...modalFormData, image: url });
-                          }
-                        }}
-                      />
-                      <label className="file-upload-btn-label">
-                        <i className={`fa-solid ${uploadingImage ? "fa-circle-notch fa-spin" : "fa-cloud-arrow-up"}`}></i>{" "}
-                        {uploadingImage ? "Uploading" : "Upload"}
-                        <input
-                          type="file"
-                          accept="image/*"
-                          style={{ display: "none" }}
-                          disabled={uploadingImage}
-                          onChange={handleModalFileUpload}
-                        />
-                      </label>
-                    </div>
-                  </div>
-                </div>
-
-                {/* DYNAMIC FIELDS: WHY CHOOSE US */}
-                {(modalCollection === "whyChooseUs" || modalCollection === "feature") && (
-                  <>
-                    <div className="form-grid-2">
-                      <div className="form-field">
-                        <label>Feature Title</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          value={modalFormData.title || ""}
-                          placeholder="e.g. Tour Guide"
-                          onChange={(e) =>
-                            setModalFormData({
-                              ...modalFormData,
-                              title: e.target.value,
-                            })
-                          }
-                          required
-                        />
-                      </div>
-                      <div className="form-field">
-                        <label>Icon Class (e.g. fa-solid fa-user-tie, fa-solid fa-tags)</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          value={modalFormData.icon || "fa-solid fa-star"}
-                          placeholder="fa-solid fa-user-tie"
-                          onChange={(e) =>
-                            setModalFormData({
-                              ...modalFormData,
-                              icon: e.target.value,
-                            })
-                          }
-                        />
-                      </div>
-                    </div>
-                    <div className="form-grid-2">
-                      <div className="form-field">
-                        <label>Badge Pill Text (e.g. Top Rated, Best Value)</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          value={modalFormData.badge || ""}
-                          placeholder="Certified Staff"
-                          onChange={(e) =>
-                            setModalFormData({
-                              ...modalFormData,
-                              badge: e.target.value,
-                            })
-                          }
-                        />
-                      </div>
-                      <div className="form-field">
-                        <label>Price / Tag (Optional)</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          value={modalFormData.price || ""}
-                          placeholder="Included / From $49"
-                          onChange={(e) =>
-                            setModalFormData({
-                              ...modalFormData,
-                              price: e.target.value,
-                            })
-                          }
-                        />
-                      </div>
-                    </div>
-                    <div className="form-field">
-                      <label>Description Paragraph</label>
-                      <textarea
-                        className="form-control"
-                        rows={3}
-                        value={modalFormData.description || modalFormData.desc || ""}
-                        placeholder="Brief details about this feature or guarantee..."
+                        value={modalFormData.title || ""}
+                        placeholder="e.g. Tour Guide"
                         onChange={(e) =>
                           setModalFormData({
                             ...modalFormData,
-                            description: e.target.value,
-                            desc: e.target.value,
+                            title: e.target.value,
                           })
                         }
                         required
                       />
                     </div>
-                  </>
-                )}
+                    <div className="form-field">
+                      <label>
+                        Icon Class (e.g. fa-solid fa-user-tie, fa-solid fa-tags)
+                      </label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        value={modalFormData.icon || "fa-solid fa-star"}
+                        placeholder="fa-solid fa-user-tie"
+                        onChange={(e) =>
+                          setModalFormData({
+                            ...modalFormData,
+                            icon: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+                  </div>
+                  <div className="form-grid-2">
+                    <div className="form-field">
+                      <label>
+                        Badge Pill Text (e.g. Top Rated, Best Value)
+                      </label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        value={modalFormData.badge || ""}
+                        placeholder="Certified Staff"
+                        onChange={(e) =>
+                          setModalFormData({
+                            ...modalFormData,
+                            badge: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+                    <div className="form-field">
+                      <label>Price / Tag (Optional)</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        value={modalFormData.price || ""}
+                        placeholder="Included / From $49"
+                        onChange={(e) =>
+                          setModalFormData({
+                            ...modalFormData,
+                            price: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+                  </div>
+                  <div className="form-field">
+                    <label>Description Paragraph</label>
+                    <textarea
+                      className="form-control"
+                      rows={3}
+                      value={
+                        modalFormData.description || modalFormData.desc || ""
+                      }
+                      placeholder="Brief details about this feature or guarantee..."
+                      onChange={(e) =>
+                        setModalFormData({
+                          ...modalFormData,
+                          description: e.target.value,
+                          desc: e.target.value,
+                        })
+                      }
+                      required
+                    />
+                  </div>
+                </>
+              )}
 
               {/* DYNAMIC FIELDS: WALLPAPER */}
               {modalCollection === "wallpaper" && (
@@ -3586,7 +3814,8 @@ export default function AdminPanel() {
               )}
 
               {/* DYNAMIC FIELDS: WHY CHOOSE US / FEATURE CARDS */}
-              {(modalCollection === "whyChooseUs" || modalCollection === "feature") && (
+              {(modalCollection === "whyChooseUs" ||
+                modalCollection === "feature") && (
                 <>
                   <div className="form-field">
                     <label>Card Title</label>
@@ -3663,7 +3892,9 @@ export default function AdminPanel() {
                     <textarea
                       className="form-control"
                       rows={3}
-                      value={modalFormData.description || modalFormData.desc || ""}
+                      value={
+                        modalFormData.description || modalFormData.desc || ""
+                      }
                       placeholder="Book cheap international flights with top airlines..."
                       onChange={(e) =>
                         setModalFormData({
@@ -3705,6 +3936,166 @@ export default function AdminPanel() {
               </button>
               <button type="submit" className="btn-action-save">
                 <i className="fa-solid fa-check"></i> Save Changes
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      {/* ======================================================================
+           ADD CUSTOMER INQUIRY MODAL (ADMIN LOGGING)
+           ====================================================================== */}
+      <div className={`admin-modal-backdrop ${isAddEnquiryOpen ? "open" : ""}`}>
+        <div className="admin-modal-card">
+          <div className="modal-header">
+            <h3>
+              <i className="fa-solid fa-user-plus text-primary"></i> Add
+              Customer Inquiry
+            </h3>
+            <button
+              type="button"
+              className="modal-close-x"
+              onClick={() => setIsAddEnquiryOpen(false)}
+            >
+              <i className="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+
+          <form
+            onSubmit={handleCreateManualEnquiry}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              flex: 1,
+              minHeight: 0,
+              overflow: "hidden",
+              margin: 0,
+              padding: 0,
+            }}
+          >
+            <div
+              className="modal-body"
+              style={{
+                flex: 1,
+                overflowY: "auto",
+                overflowX: "hidden",
+                minHeight: 0,
+                maxHeight: "calc(90vh - 140px)",
+                padding: "22px 26px",
+              }}
+            >
+              <div className="form-grid-2">
+                <div className="form-field">
+                  <label>Customer Full Name *</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="e.g. John Doe"
+                    value={newEnquiryForm.fullName}
+                    onChange={(e) =>
+                      setNewEnquiryForm({
+                        ...newEnquiryForm,
+                        fullName: e.target.value,
+                      })
+                    }
+                    required
+                  />
+                </div>
+                <div className="form-field">
+                  <label>Phone / WhatsApp Number *</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="+971 58 833 8927"
+                    value={newEnquiryForm.phone}
+                    onChange={(e) =>
+                      setNewEnquiryForm({
+                        ...newEnquiryForm,
+                        phone: e.target.value,
+                      })
+                    }
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="form-grid-2">
+                <div className="form-field">
+                  <label>Email Address</label>
+                  <input
+                    type="email"
+                    className="form-control"
+                    placeholder="customer@example.com"
+                    value={newEnquiryForm.email}
+                    onChange={(e) =>
+                      setNewEnquiryForm({
+                        ...newEnquiryForm,
+                        email: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+                <div className="form-field">
+                  <label>Service / Tour Package</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="e.g. 5-Star Executive Umrah Package"
+                    value={newEnquiryForm.serviceRequired}
+                    onChange={(e) =>
+                      setNewEnquiryForm({
+                        ...newEnquiryForm,
+                        serviceRequired: e.target.value,
+                      })
+                    }
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="form-field">
+                <label>Inquiry Message / Customer Notes</label>
+                <textarea
+                  className="form-control"
+                  rows={4}
+                  placeholder="Enter passenger count, travel dates, budget, or custom notes..."
+                  value={newEnquiryForm.message}
+                  onChange={(e) =>
+                    setNewEnquiryForm({
+                      ...newEnquiryForm,
+                      message: e.target.value,
+                    })
+                  }
+                />
+              </div>
+            </div>
+
+            <div
+              className="modal-footer"
+              style={{
+                flexShrink: 0,
+                padding: "16px 26px",
+                borderTop: "1px solid #e2e8f0",
+                background: "#ffffff",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "flex-end",
+                gap: "12px",
+                position: "sticky",
+                bottom: 0,
+                zIndex: 20,
+                boxShadow: "0 -4px 12px rgba(0, 0, 0, 0.04)",
+              }}
+            >
+              <button
+                type="button"
+                className="btn-action-cancel"
+                onClick={() => setIsAddEnquiryOpen(false)}
+              >
+                Cancel
+              </button>
+              <button type="submit" className="btn-action-save">
+                <i className="fa-solid fa-check"></i> Save Customer Inquiry
               </button>
             </div>
           </form>

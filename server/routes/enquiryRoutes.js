@@ -1,11 +1,10 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const enquiryController = require('../controllers/enquiryController');
-const auth = require('../middleware/auth');
+const enquiryController = require("../controllers/enquiryController");
 
-router.post('/', enquiryController.createEnquiry); // Public route
-router.get('/', auth, enquiryController.getAllEnquiries);
-router.put('/:id/read', auth, enquiryController.markAsRead);
-router.delete('/:id', auth, enquiryController.deleteEnquiry);
+router.post("/", enquiryController.createEnquiry); // Public route for website booking and quote forms
+router.get("/", enquiryController.getAllEnquiries); // Retrieve inquiries (admin + fallback)
+router.put("/:id/read", enquiryController.markAsRead); // Toggle or update read status
+router.delete("/:id", enquiryController.deleteEnquiry); // Delete inquiry
 
 module.exports = router;

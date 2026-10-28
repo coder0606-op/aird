@@ -13,18 +13,6 @@
       "secondaryBtnText": "Request Custom Quote"
     },
     {
-      "id": "slide-2",
-      "badge": "Sacred Pilgrimage",
-      "badgeIcon": "fa-kaaba",
-      "title": "Hajj & Umrah",
-      "highlight": "Made Easy",
-      "desc": "Embark on your spiritual pilgrimage with utter peace of mind. Deluxe 5-star hotels right on the Haram courtyards, luxury VIP transport, and guided Ziyarat.",
-      "image": "https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?auto=format&fit=crop&w=1920&q=80",
-      "primaryBtnText": "View Umrah Packages",
-      "primaryBtnLink": "#packages",
-      "secondaryBtnText": "Inquire Umrah Group"
-    },
-    {
       "id": "slide-3",
       "badge": "Luxury Holidays",
       "badgeIcon": "fa-umbrella-beach",
@@ -39,36 +27,12 @@
   ],
   "activities": [
     {
-      "_id": "att-1",
-      "id": "att-1",
-      "title": "Burj Khalifa",
-      "name": "Burj Khalifa",
-      "activities": "145 activities",
-      "price": 95,
-      "originalPrice": 120,
-      "currency": "AED",
-      "images": [
-        "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=700&q=80"
-      ],
-      "category": "attraction",
-      "isActive": true,
-      "createdAt": "2026-10-24T08:31:44.952Z"
-    },
-    {
-      "_id": "att-2",
-      "id": "att-2",
-      "title": "Museum of the Future",
-      "name": "Museum of the Future",
-      "activities": "92 activities",
-      "price": 45,
-      "originalPrice": 120,
-      "currency": "AED",
-      "images": [
-        "https://images.unsplash.com/photo-1634148545855-32a8427fefb3?auto=format&fit=crop&w=700&q=80"
-      ],
-      "category": "attraction",
-      "isActive": true,
-      "createdAt": "2026-10-24T08:31:44.952Z"
+      "name": "asdgasffas",
+      "activities": "100+ activities",
+      "price": "$65",
+      "btnText": "Book Now",
+      "image": "",
+      "id": "att-1793173951366"
     },
     {
       "_id": "att-3",
@@ -169,25 +133,26 @@
   ],
   "tours": [
     {
-      "_id": "tour-1",
-      "id": "tour-1",
-      "title": "Sunset Desert Safari with Barbecue Dinner at bedouin tent",
+      "title": "asda",
+      "tagline": "Full Day Private 4WD Excursion",
+      "image": "",
       "duration": "Full Day",
-      "price": 120,
-      "currency": "AED",
-      "images": [
-        "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=700&q=80"
+      "vehicle": "4WD Cruiser",
+      "guide": "Licensed Guide",
+      "price": "$120",
+      "rating": 4.9,
+      "inclusions": [
+        "4WD Land Cruiser",
+        "Hotel Pickup & Drop",
+        "Lunch & Refreshments",
+        "English/Arabic Guide"
       ],
-      "rating": 5,
-      "reviewsCount": 128,
-      "description": "Experience this world-class tour with expert guides.",
-      "isFeatured": true,
-      "createdAt": "2026-10-24T08:31:44.952Z"
+      "id": "tou-1793174025675"
     },
     {
       "_id": "tour-2",
       "id": "tour-2",
-      "title": "Private Custom Made Full Day tour By 4WD",
+      "title": "Private Custom Made Full Day tour By 4WDasddsa",
       "duration": "Full Day",
       "price": 450,
       "currency": "AED",
@@ -198,7 +163,8 @@
       "reviewsCount": 128,
       "description": "Experience this world-class tour with expert guides.",
       "isFeatured": true,
-      "createdAt": "2026-10-24T08:31:44.952Z"
+      "createdAt": "2026-10-24T08:31:44.952Z",
+      "image": ""
     },
     {
       "_id": "tour-3",
@@ -293,29 +259,44 @@
   ],
   "travelDeals": [
     {
-      "_id": "pkg-1",
-      "id": "pkg-1",
-      "title": "5-Star VIP Executive Umrah Package",
-      "duration": "14 Days / 13 Nights",
-      "price": 1199,
-      "currency": "AED",
-      "images": [
-        "https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?auto=format&fit=crop&w=700&q=80"
-      ],
-      "discount": "Spiritual Journey",
+      "_id": "item_1793174107267_1mn1pk",
+      "id": "item_1793174107267_1mn1pk",
+      "createdAt": "2026-10-28T07:55:07.267Z",
+      "updatedAt": "2026-10-28T07:55:07.267Z",
+      "title": "a",
       "category": "Holiday Package",
-      "features": [
-        "Flights Included",
-        "4* Hotel",
-        "Transfers",
-        "Visa Support"
+      "badge": "Best Seller",
+      "badgeColor": "bg-emerald-600",
+      "image": "",
+      "duration": "5 Days / 4 Nights",
+      "price": "$799",
+      "inclusions": [
+        "5-Star Hotel",
+        "Daily Breakfast",
+        "Guided Excursions",
+        "Airport VIP Transfers"
+      ]
+    },
+    {
+      "title": "a",
+      "category": "Holiday Package",
+      "badge": "Best Seller",
+      "badgeColor": "bg-emerald-600",
+      "image": "",
+      "duration": "5 Days / 4 Nights",
+      "price": "$799",
+      "inclusions": [
+        "5-Star Hotel",
+        "Daily Breakfast",
+        "Guided Excursions",
+        "Airport VIP Transfers"
       ],
-      "createdAt": "2026-10-24T08:31:44.952Z"
+      "id": "pac-1793174107160"
     },
     {
       "_id": "pkg-2",
       "id": "pkg-2",
-      "title": "Swiss Alps & Lakes Scenic Getaway",
+      "title": "Swissssss Alps & Lakes Scenic Getaway",
       "duration": "8 Days / 7 Nights",
       "price": 1450,
       "currency": "AED",
@@ -330,7 +311,8 @@
         "Transfers",
         "Visa Support"
       ],
-      "createdAt": "2026-10-24T08:31:44.952Z"
+      "createdAt": "2026-10-24T08:31:44.952Z",
+      "image": ""
     },
     {
       "_id": "pkg-3",
@@ -375,16 +357,16 @@
   ],
   "gallery": [
     {
+      "title": "sfd",
+      "location": "Salalah, Oman",
+      "image": "",
+      "id": "gal-1793174003815"
+    },
+    {
       "id": "gal-1",
       "title": "Coastal Fjords of Salalah",
       "image": "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=700&q=80",
       "icon": "fa-mountain-sun"
-    },
-    {
-      "id": "gal-2",
-      "title": "Rub Al Khali Sand Dunes",
-      "image": "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=700&q=80",
-      "icon": "fa-compass"
     },
     {
       "id": "gal-3",
@@ -394,7 +376,7 @@
     },
     {
       "id": "gal-4",
-      "title": "Arabian Sunset Dhow Cruise",
+      "title": "Arabian Sunset Dhow Cruiseasfas",
       "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=700&q=80",
       "icon": "fa-sailboat"
     }
@@ -496,6 +478,56 @@
   ],
   "enquiries": [
     {
+      "_id": "6ae1d9d9f6b44f61d0e44fc9",
+      "id": "6ae1d9d9f6b44f61d0e44fc9",
+      "createdAt": "2026-10-28T11:17:45.071Z",
+      "updatedAt": "2026-10-28T11:17:45.146Z",
+      "fullName": "aaaa",
+      "phone": "141241",
+      "email": "asffsa@gmail.com",
+      "city": "",
+      "destination": "",
+      "serviceRequired": "Tokyo & Kyoto Cherry Blossom Highlights",
+      "message": "Date: 2025-06-06 | Guests: 2 Persons | Payment: Credit / Debit Card (Online 3D Secure) | Notes: w",
+      "isRead": false
+    },
+    {
+      "_id": "6ae1d9c375b00d35947510a3",
+      "id": "6ae1d9c375b00d35947510a3",
+      "createdAt": "2026-10-28T11:17:23.370Z",
+      "updatedAt": "2026-10-28T11:17:23.460Z",
+      "fullName": "aaaa",
+      "phone": "141241",
+      "email": "as@gmail.com",
+      "city": "",
+      "destination": "",
+      "serviceRequired": "a",
+      "message": "Date: 2024-08-09 | Guests: 2 Persons | Payment: Credit / Debit Card (Online 3D Secure) | Notes: jkh",
+      "isRead": false
+    },
+    {
+      "_id": "item_1793174215450_fo8saa",
+      "id": "item_1793174215450_fo8saa",
+      "createdAt": "2026-10-28T07:56:55.450Z",
+      "updatedAt": "2026-10-28T07:56:55.451Z",
+      "fullName": "aaaa",
+      "email": "asffsa@gmail.com",
+      "phone": "141241",
+      "serviceRequired": "Swissssss Alps & Lakes Scenic Getaway",
+      "message": "Date: 2003-06-06 | Guests: 2 Persons | Payment: Credit / Debit Card (Online 3D Secure) | Notes: asf"
+    },
+    {
+      "_id": "item_1793174136972_9e81c3",
+      "id": "item_1793174136972_9e81c3",
+      "createdAt": "2026-10-28T07:55:36.972Z",
+      "updatedAt": "2026-10-28T07:55:36.972Z",
+      "fullName": "fsfsd",
+      "email": "as@gmail.com",
+      "phone": "dsfsf",
+      "serviceRequired": "Toyota Prado – Premium SUV",
+      "message": "Date: 3003-06-06 | Guests: 2 Persons | Payment: Credit / Debit Card (Online 3D Secure) | Notes: None"
+    },
+    {
       "_id": "item_1792843622366_l8lto4",
       "id": "item_1792843622366_l8lto4",
       "createdAt": "2026-10-24T12:07:02.366Z",
@@ -590,19 +622,20 @@
   ],
   "whyChooseUs": [
     {
-      "id": "card-1",
-      "title": "Worldwide Flights",
-      "titleFormatted": "Worldwide Flights",
-      "icon": "✈️",
+      "title": "as",
+      "titleFormatted": "",
+      "icon": "✈️dafd",
+      "description": "sadff",
+      "desc": "sadff",
       "price": "From $299",
-      "desc": "Book cheap international flights with top airlines: Emirates, Qatar Airways, Etihad, Saudi, FlyDubai, Air Arabia & more. Best fares guaranteed with flexible cancellation.",
-      "description": "Book cheap international flights with top airlines: Emirates, Qatar Airways, Etihad, Saudi, FlyDubai, Air Arabia & more. Best fares guaranteed with flexible cancellation.",
+      "badge": "Featured",
       "image": "/assets/cards/card1.png",
-      "fallback": "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=700&q=80"
+      "fallback": "/assets/cards/card1.png",
+      "id": "why-1793173897513"
     },
     {
       "id": "card-2",
-      "title": "VIP Umrah Packages",
+      "title": "VIP Umrah Packagessss",
       "titleFormatted": "VIP Umrah Packages",
       "icon": "🕌",
       "price": "From $799",
